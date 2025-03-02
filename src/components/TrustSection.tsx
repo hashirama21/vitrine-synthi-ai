@@ -11,7 +11,7 @@ const TrustSection = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-between items-center gap-8 md:gap-12">
+        <div className="flex flex-wrap justify-around items-center gap-8 md:gap-12">
           {/* Dribbble logo */}
           <div className="opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 hover:scale-105 transform transition-transform duration-300">
             <Image
