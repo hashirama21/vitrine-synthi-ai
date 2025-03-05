@@ -1,9 +1,26 @@
-import React from 'react'
 
-export default function About() {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-        <span className="text-lg font-medium">About page here</span>
-      </div>
-    );
-  }
+import About from '@/components/About';
+import Choose from '@/components/Choose';
+import ContactUs from '@/components/ContactUs';
+import FAQSection from '@/components/Faq';
+import Missions from '@/components/Missions';
+import OurValues from '@/components/OurValues';
+import VisionSection from '@/components/Vision';
+import React from 'react';
+
+
+
+export default function AboutPage() {
+  return (
+    <main className="flex flex-col min-h-screen bg-[#0a0a1a]">
+  
+    <About/>
+    <VisionSection/>  
+    <Missions/>
+    <OurValues/>
+    <Choose/>
+    <ContactUs/>
+    <FAQSection/>
+    </main>
+  );
+}

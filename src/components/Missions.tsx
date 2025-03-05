@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 
 
-export default function Solutions() {
+export default function Missions() {
 
 
 return (
-<section className="relative min-h-[50vh] flex flex-col lg:flex-row items-center  justify-between px-4 sm:px-6 md:px-12 lg:px-24  sm:mt-10">
+<section className="relative min-h-[50vh] flex flex-col lg:flex-row items-center py-5 justify-between px-4 sm:px-6 md:px-12 lg:px-24 mt-6 sm:mt-10">
 
 {/* Section Droite : Visuel Interactif */}
 <div className="lg:w-1/2 w-full flex justify-center max-w-sm mx-auto">
@@ -56,12 +56,11 @@ return (
   </h2>
   <ul className="mt-6 space-y-3">
     {[
-                "Designing and implementing state-of-the-art robotics solutions",
-                "Developing cutting-edge AI algorithms and models",
-                "Offering personalized AI solutions",
-                "Providing consultation services",
-                "Offering training programs",
-            ].map((text, index) => (
+      "Develop advanced AI solutions tailored to economic and social challenges.",
+      "Train the talents of tomorrow and strengthen the african technological ecosystem.",
+      "Facilitate the adoption of AI in businesses, institutions and strategic industries.",
+      "Ensure responsible and ethical AI for sustainable inclusive development.",
+    ].map((text, index) => (
       <li key={index} className="flex items-center gap-3">
         <CheckCircle className="text-blue-500" />
         {text}
@@ -74,8 +73,3 @@ return (
 
 );
 }
-
-
-/**
-
- */
