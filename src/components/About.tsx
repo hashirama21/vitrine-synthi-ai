@@ -3,48 +3,11 @@
 import React from 'react';
 import { motion } from "framer-motion";
 
-export default function Features() {
+export default function About() {
   return (
     <section className="py-20 md:py-32 bg-[#0a0a1a]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Left Content Section */}
-          <motion.div 
-            animate={{ 
-              x: [0, 5, -5, 0],
-              transition: {
-                duration: 4,
-                repeat: Infinity,
-                repeatType: "mirror"
-              }
-            }}
-            className="lg:w-1/2"
-          >
-            <h2 className="text-sm uppercase text-blue-400 tracking-wider mb-3">
-              AI-DRIVEN SOLUTIONS
-            </h2>
-            <h3 className="text-3xl md:text-4xl font-bold mb-6">
-              Artificial intelligence for a sustainable future
-            </h3>
-            <div className="text-gray-300 space-y-4">
-              <p>
-                With the right AI-powered solutions, businesses can prioritize sustainable growth while maintaining a competitive edge in today's dynamic markets.
-              </p>
-              <p>
-                Our platform combines sophisticated AI algorithms with deep domain expertise to transform your business operations and drive meaningful results.
-              </p>
-              <p>
-                Each of our solutions represents years of research and development to provide the most advanced AI capabilities available.
-              </p>
-              <a href="/solutions" className="inline-block mt-6 text-blue-400 hover:text-blue-300 transition-colors">
-                Learn More
-                <svg className="inline-block ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
-            </div>
-          </motion.div>
-
           {/* Right Content Section with Autonomous 3D Animations */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-8 bg-[#0d0d1a] text-white">
             {/* Statistics Card with Continuous Animation */}
@@ -177,6 +140,36 @@ export default function Features() {
               </motion.div>
             </motion.div>
           </div>
+                    {/* Left Content Section */}
+                    <motion.div 
+            animate={{ 
+              x: [0, 5, -5, 0],
+              transition: {
+                duration: 4,
+                repeat: Infinity,
+                repeatType: "mirror"
+              }
+            }}
+            className="lg:w-1/2"
+          >
+            <h2 className="text-sm uppercase text-blue-400 tracking-wider mb-3">
+              ABOUT US
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6">
+              Artificial intelligence for a sustainable future
+            </h3>
+            <div className="text-gray-300 space-y-4">
+              <p>
+                At Synthi AI, we develop advanced solutions in artificial intelligence (AI), robotics, and computer vision to accelerate innovation and address the strategic challenges of businesses and institutions.
+              </p>
+              <p>
+                Our ambition is clear: to make Africa a global leader in AI by creating ethical, high-performance, and accesible technologies capable of transforming key sectors such as health, agriculture, finance and climate.
+              </p>
+              <p>
+                We believe that AI is not just a technology, but a powerful lever for development and economic transformation. That's why we collaborate with researchers, startups, businesses, and governments to build a strong technological ecosystem.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
