@@ -1,25 +1,77 @@
 'use client';
 
-import React from 'react';
-import { motion } from "framer-motion";
+import Image from 'next/image';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Initialiser GSAP ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Features() {
+  const textRef = useRef(null);
+  const statsRef = useRef(null);
+  const cardsRef = useRef(null);
+
+  useEffect(() => {
+    // Animation pour le texte
+    gsap.from(textRef.current, {
+      opacity: 0,
+      y: -50,
+      duration: 1,
+      scrollTrigger: {
+        trigger: textRef.current,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Animation pour la carte de statistiques
+    gsap.from(statsRef.current, {
+      opacity: 0,
+      scale: 0.8,
+      rotation: -10,
+      duration: 1.5,
+      scrollTrigger: {
+        trigger: statsRef.current,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Animation pour les cartes de crédit
+    gsap.from(cardsRef.current, {
+      opacity: 0,
+      y: 50,
+      rotation: 10,
+      duration: 1.5,
+      scrollTrigger: {
+        trigger: cardsRef.current,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Animation continue pour les cartes de crédit
+    gsap.to(cardsRef.current, {
+      y: 10,
+      rotation: 5,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'power1.inOut',
+    });
+  }, []);
+
   return (
     <section className="py-20 md:py-32 bg-[#0a0a1a]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left Content Section */}
-          <motion.div 
-            animate={{ 
-              x: [0, 5, -5, 0],
-              transition: {
-                duration: 4,
-                repeat: Infinity,
-                repeatType: "mirror"
-              }
-            }}
-            className="lg:w-1/2"
-          >
+          <div ref={textRef} className="lg:w-1/2">
             <h2 className="text-sm uppercase text-blue-400 tracking-wider mb-3">
               AI-DRIVEN SOLUTIONS
             </h2>
@@ -28,7 +80,7 @@ export default function Features() {
             </h3>
             <div className="text-gray-300 space-y-4">
               <p>
-                With the right AI-powered solutions, businesses can prioritize sustainable growth while maintaining a competitive edge in today's dynamic markets.
+                With the right AI-powered solutions, businesses can prioritize sustainable growth while maintaining a competitive edge in today&apos;s dynamic markets.
               </p>
               <p>
                 Our platform combines sophisticated AI algorithms with deep domain expertise to transform your business operations and drive meaningful results.
@@ -43,23 +95,12 @@ export default function Features() {
                 </svg>
               </a>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right Content Section with Autonomous 3D Animations */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-8 bg-[#0d0d1a] text-white">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-8 bg-[#0d0d1a] text-white rounded-xl">
             {/* Statistics Card with Continuous Animation */}
-            <motion.div 
-              animate={{
-                rotate: [0, 5, -5, 0],
-                scale: [1, 1.02, 0.98, 1],
-                transition: {
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatType: "mirror"
-                }
-              }}
-              className="bg-[#171727] text-white p-6 rounded-xl shadow-lg w-64"
-            >
+            <div ref={statsRef} className="bg-[#171727] text-white p-6 rounded-xl shadow-lg w-full md:w-64">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium">Statistics</h3>
                 <button className="text-gray-400">
@@ -120,32 +161,12 @@ export default function Features() {
                   </svg>
                 </button>
               </div>
-            </motion.div>
+            </div>
 
             {/* Credit Cards with Continuous 3D Animation */}
-            <motion.div 
-              animate={{
-                y: [0, 10, -10, 0],
-                transition: {
-                  duration: 4,
-                  repeat: Infinity,
-                  repeatType: "mirror"
-                }
-              }}
-              className="relative h-80 w-80 flex items-center justify-center perspective-1000"
-            >
+            <div ref={cardsRef} className="relative h-80 w-80 flex items-center justify-center perspective-1000">
               {/* First Credit Card */}
-              <motion.div
-                animate={{
-                  rotate: [6, 10, 2, 6],
-                  transition: {
-                    duration: 5,
-                    repeat: Infinity,
-                    repeatType: "mirror"
-                  }
-                }}
-                className="absolute transform rotate-6 z-10"
-              >
+              <div className="absolute transform rotate-6 z-10">
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-64 h-40 rounded-xl p-4 shadow-xl flex flex-col justify-between">
                   <div className="flex justify-between items-center">
                     <div className="text-xs text-white opacity-80">Peter White</div>
@@ -153,20 +174,10 @@ export default function Features() {
                   <div className="text-base font-medium text-white">**** **** **** 0000</div>
                   <div className="text-xs text-white opacity-80">03/26 - Debit</div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Second Credit Card */}
-              <motion.div
-                animate={{
-                  rotate: [-6, -10, -2, -6],
-                  transition: {
-                    duration: 5,
-                    repeat: Infinity,
-                    repeatType: "mirror"
-                  }
-                }}
-                className="absolute transform -rotate-6 z-20"
-              >
+              <div className="absolute transform -rotate-6 z-20">
                 <div className="bg-gradient-to-r from-pink-500 to-purple-600 w-64 h-40 rounded-xl p-4 shadow-xl flex flex-col justify-between">
                   <div className="flex justify-between items-center">
                     <div className="text-xs text-white opacity-80">Emre Huayde Bastas</div>
@@ -174,8 +185,8 @@ export default function Features() {
                   <div className="text-base font-medium text-white">**** **** **** 0000</div>
                   <div className="text-xs text-white opacity-80">10/26 - Credit</div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

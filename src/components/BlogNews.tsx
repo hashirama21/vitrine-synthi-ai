@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image';
 
 export default function BlogNews() {
   return (
@@ -13,7 +14,7 @@ export default function BlogNews() {
   <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
     {/* Blog 1 */}
     <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-      <img src="https://www.automate.org/images/ogImages/RIA-blog-Industrial-Robotics-AI-Machine-Learning.jpeg" alt="AI Robotics" className="rounded-lg" />
+      <Image src="https://www.automate.org/images/ogImages/RIA-blog-Industrial-Robotics-AI-Machine-Learning.jpeg" alt="AI Robotics" width={89} height={89} className="rounded-lg" />
       <div className="mt-4 flex flex-wrap gap-2">
         <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">AI</span>
         <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">Robotics</span>
@@ -26,7 +27,7 @@ export default function BlogNews() {
 
     {/* Blog 2 */}
     <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZSx7qMrFamAQ831LSQG7c1f9oZtplg_OTnI1hUGqQ7V4UuTe5jcUAhZ8wfVzS6ggr2DY&usqp=CAU" alt="AI Testimonies" className="rounded-lg" />
+      <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZSx7qMrFamAQ831LSQG7c1f9oZtplg_OTnI1hUGqQ7V4UuTe5jcUAhZ8wfVzS6ggr2DY&usqp=CAU" alt="AI Testimonies" width={100} height={100} className="rounded-lg" />
       <div className="mt-4 flex flex-wrap gap-2">
         <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">AI</span>
         <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">Testimonies</span>
@@ -39,7 +40,7 @@ export default function BlogNews() {
 
     {/* Blog 3 */}
     <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-      <img src="https://d2ds8yldqp7gxv.cloudfront.net/Blog+Explanatory+Images/Top+Technology+Trends+1.webp" alt="Tech Trends" className="rounded-lg" />
+      <Image src="https://d2ds8yldqp7gxv.cloudfront.net/Blog+Explanatory+Images/Top+Technology+Trends+1.webp" alt="Tech Trends" width={100} height={100} className="rounded-lg" />
       <div className="mt-4 flex flex-wrap gap-2">
         <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">Tech trends</span>
       </div>

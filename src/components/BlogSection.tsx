@@ -61,7 +61,7 @@ const BlogSection = () => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-6">"Game-changing AI solution! Boosted efficiency and data-driven insights. Highly recommended!"</p>
+            <p className="text-gray-300 mb-6">&quot;Game-changing AI solution! Boosted efficiency and data-driven insights. Highly recommended!&quot;</p>
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
                 <Image src="/mia-baker.jpg" alt="Mia Baker" width={48} height={48} className="rounded-full" />
@@ -82,7 +82,7 @@ const BlogSection = () => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-6">"This AI platform streamlined our operations and boosted productivity. Highly recommend!"</p>
+            <p className="text-gray-300 mb-6">&quot;This AI platform streamlined our operations and boosted productivity. Highly recommend! &quot;</p>
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
                 <Image src="/allison-walt.jpg" alt="Allison Walt" width={48} height={48} className="rounded-full" />
@@ -103,7 +103,7 @@ const BlogSection = () => {
                 </svg>
               ))}
             </div>
-            <p className="text-gray-300 mb-6">"AI platform! Streamlined operations and boosted productivity."</p>
+            <p className="text-gray-300 mb-6">&quot;AI platform! Streamlined operations and boosted productivity.&quot;</p>
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
                 <Image src="/user-avatar.jpg" alt="User" width={48} height={48} className="rounded-full" />

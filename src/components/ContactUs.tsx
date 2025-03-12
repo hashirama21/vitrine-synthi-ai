@@ -11,7 +11,7 @@ export default function ContactUs() {
               <p className="text-blue-100 mb-6">
                 Ready to harness the power of AI for your business or institution? Contact us today 
                 to explore how Synthi AI can tailor cutting-edge solutions to your specific needs. 
-                Let's innovate together and create a sustainable, tech-driven future.
+                Let&apos;s innovate together and create a sustainable, tech-driven future.
               </p>
             </div>
             <div className="flex justify-center md:justify-end">

@@ -1,4 +1,5 @@
 
+
 import BlogNews from '@/components/BlogNews';
 import BlogSection from '@/components/BlogSection';
 import FAQSection from '@/components/Faq';
@@ -9,7 +10,6 @@ import Solutions from '@/components/Solutions';
 import Testimonials from '@/components/Testimonials';
 import TrustSection from '@/components/TrustSection';
 import React from 'react';
-
 
 
 export default function Home() {
@@ -23,8 +23,7 @@ export default function Home() {
       <BlogSection />
       <BlogNews/>
       <FAQSection/>
-      <Footer/>
-      
+      {/*<Footer/> */}
     </main>
   );
 }

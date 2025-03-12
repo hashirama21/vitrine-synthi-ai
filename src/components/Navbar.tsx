@@ -33,20 +33,21 @@ export const Navbar = () => {
   }, []);
   
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+    <nav className={`w-full max-w-[1440px] h-[120px] z-50 transition-all duration-300 ${
       isScrolled ? 'bg-[#0a0a1a]/90 backdrop-blur-md py-3' : 'bg-transparent py-5'
     }`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
+   
+      <div className="container mx-auto px-4 h-full ml-28">
+        <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center h-full">
             <div className="text-white font-bold text-xl">
-              <span className="text-blue-400">Synthi</span>AI
+              <Image src="/logo.png" alt="logo" width={170} height={60} />
             </div>
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-14 h-full">
             <Link href="/" className="nav-item text-white hover:text-blue-400 transition-colors">
               Home
             </Link>
@@ -68,7 +69,8 @@ export const Navbar = () => {
           {/* CTA Button */}
           <Link
             href="/contact"
-            className=" hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300"
+            className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300"
+            style={{ width: '200px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Get In Touch
           </Link>
@@ -132,6 +134,7 @@ export const Navbar = () => {
               <Link
                 href="/contact"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-center"
+                style={{ width: '200px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Get In Touch

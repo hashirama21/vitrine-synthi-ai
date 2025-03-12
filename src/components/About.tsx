@@ -166,7 +166,7 @@ export default function About() {
                 Our ambition is clear: to make Africa a global leader in AI by creating ethical, high-performance, and accesible technologies capable of transforming key sectors such as health, agriculture, finance and climate.
               </p>
               <p>
-                We believe that AI is not just a technology, but a powerful lever for development and economic transformation. That's why we collaborate with researchers, startups, businesses, and governments to build a strong technological ecosystem.
+                We believe that AI is not just a technology, but a powerful lever for development and economic transformation. That&apos;s why we collaborate with researchers, startups, businesses, and governments to build a strong technological ecosystem.
               </p>
             </div>
           </motion.div>
