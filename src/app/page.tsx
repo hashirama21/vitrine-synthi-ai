@@ -1,5 +1,4 @@
 
-
 import BlogNews from '@/components/BlogNews';
 import BlogSection from '@/components/BlogSection';
 import FAQSection from '@/components/Faq';
