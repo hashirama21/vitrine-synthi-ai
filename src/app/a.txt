@@ -1,0 +1,136 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { MoreHorizontal } from "lucide-react";
+import React from "react";
+
+export default function FinanceOverview(): JSX.Element {
+  // Data for statistics
+  const stats = {
+    totalActivity: 436,
+    income: 305,
+    expense: 58,
+  };
+
+  return (
+    <div className="flex flex-col items-start gap-2.5">
+      <div className="relative w-full max-w-[1270px] h-auto md:h-[467px] flex flex-col md:flex-row">
+        {/* Left Section - Company Info */}
+        <div className="w-full md:w-[596px] md:h-[372px] md:ml-[55px] flex flex-col justify-center">
+          <div className="flex flex-col gap-[30px]">
+            <div className="flex flex-col gap-[41px]">
+              <span className="font-['Arial-Regular',Helvetica] font-normal text-color-palette-secondary text-[15px] tracking-[1.50px] leading-[27.0px]">
+                AI-DRIVEN COMPANY
+              </span>
+
+              <h1 className="[background:linear-gradient(95deg,rgba(235,241,255,1)_0%,rgba(179,192,222,1)_100%)] [-webkit-background-clip:text] bg-clip-text text-transparent font-['Arial_Rounded_MT_Bold-Regular',Helvetica] text-[46px] tracking-[-0.92px] leading-[55.2px]">
+                Artificial intelligence for a<br />
+                sustainable future
+              </h1>
+            </div>
+
+            <p className="font-['Arial-Regular',Helvetica] font-normal text-gray text-base tracking-[0] leading-[28.8px] max-w-[522px]">
+              Synthi-AI is a leading technology company specializing in
+              providing advanced solutions in artificial intelligence (AI),
+              custom software development, and robotics. we are passionate about
+              harnessing the power of AI to transform businesses and drive
+              innovation.
+            </p>
+
+            <Button
+              variant="outline"
+              className="h-[50px] min-w-[200px] flex items-center justify-center gap-2 border border-line-gray rounded-md"
+            >
+              Learn More
+              <span className="ml-1">→</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Right Section - Statistics and Cards */}
+        <div className="w-full md:w-[565px] h-auto md:h-[467px] relative mt-8 md:mt-0">
+          <div className="relative h-full">
+            {/* Credit Card 1 */}
+            <div className="absolute w-80 h-[201px] top-[35px] left-[245px] bg-[url(/creditcard-3.png)] bg-cover bg-[50%_50%] rounded-xl shadow-lg" />
+
+            {/* Credit Card 2 */}
+            <div className="absolute w-[400px] h-[251px] top-[216px] left-[121px] bg-[url(/creditcard-1.png)] bg-cover bg-[50%_50%] rounded-xl shadow-lg" />
+
+            {/* Statistics Card */}
+            <Card className="absolute w-72 h-[344px] top-0 left-0 rounded-[14px] border border-solid border-line-gray backdrop-blur-[5px] backdrop-brightness-[100%] [-webkit-backdrop-filter:blur(5px)_brightness(100%)]">
+              <CardContent className="p-0 h-full relative">
+                {/* Card Header */}
+                <div className="flex justify-between items-center p-[22px]">
+                  <h3 className="font-['Manrope-Medium',Helvetica] font-medium text-light-gray text-base tracking-[0] leading-[28.8px]">
+                    Statistics
+                  </h3>
+                  <Button variant="ghost" size="icon" className="w-6 h-6 p-0">
+                    <MoreHorizontal className="w-5 h-5 text-light-gray" />
+                  </Button>
+                </div>
+
+                {/* Circular Chart */}
+                <div className="absolute w-[135px] h-[101px] top-[89px] left-[75px] flex items-center justify-center">
+                  <div className="relative w-[139px] h-[91px]">
+                    {/* Circular progress elements */}
+                    <div className="absolute w-[136px] h-[74px] top-0 left-[3px]">
+                      {/* These would be SVG circles in a real implementation */}
+                      <div className="w-full h-full rounded-full border-[10px] border-[#2663ff] opacity-20"></div>
+                      <div className="absolute top-0 left-0 w-full h-full rounded-full border-[10px] border-[#f6554b] opacity-20"></div>
+                      <div className="absolute top-0 left-0 w-3/4 h-full rounded-full border-[10px] border-[#2663ff] border-r-transparent border-b-transparent"></div>
+                    </div>
+
+                    {/* Total Activity Counter */}
+                    <div className="absolute w-[58px] h-[53px] top-[38px] left-11 flex flex-col items-center">
+                      <span className="font-['Manrope-Regular',Helvetica] font-normal text-gray text-[9px] text-center tracking-[0] leading-[16.2px]">
+                        Total Activity
+                      </span>
+                      <span className="font-['Manrope-SemiBold',Helvetica] font-semibold text-light-gray text-2xl text-center tracking-[0] leading-[43.2px]">
+                        {stats.totalActivity}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Income Indicator */}
+                <div className="absolute w-[54px] h-[42px] top-[193px] left-[66px] flex items-start">
+                  <div className="w-2 h-2 mt-1.5 bg-[#2663ff] rounded"></div>
+                  <div className="ml-3.5">
+                    <span className="block font-['Manrope-Regular',Helvetica] font-normal text-[#c2cde7] text-[11px] tracking-[0] leading-[18.7px]">
+                      Income
+                    </span>
+                    <span className="block font-['Manrope-Bold',Helvetica] font-bold text-light-gray text-[13px] leading-[22.1px]">
+                      {stats.income}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Expense Indicator */}
+                <div className="absolute w-16 h-[43px] top-48 left-[158px] flex items-start">
+                  <div className="w-2 h-2 mt-[7px] bg-[#f6554b] rounded"></div>
+                  <div className="ml-3.5">
+                    <span className="block font-['Manrope-Regular',Helvetica] font-normal text-[#c2cde7] text-xs tracking-[0] leading-[20.4px]">
+                      Expense
+                    </span>
+                    <span className="block font-['Manrope-Bold',Helvetica] font-bold text-light-gray text-[13px] leading-[22.1px]">
+                      {stats.expense}
+                    </span>
+                  </div>
+                </div>
+
+                {/* All Activity Button */}
+                <div className="absolute w-[200px] h-11 top-[259px] left-[43px]">
+                  <Button
+                    variant="outline"
+                    className="w-full h-full rounded border border-solid border-line-gray font-['Manrope-SemiBold',Helvetica] font-semibold text-gray text-[13px] text-center"
+                  >
+                    All Activity
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

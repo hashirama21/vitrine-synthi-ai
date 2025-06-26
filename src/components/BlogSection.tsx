@@ -1,124 +1,159 @@
-import React from 'react';
-import Image from 'next/image';
-import ContactUs from './ContactUs';
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ChevronRight } from "lucide-react";
+import React from "react";
 
-const BlogSection = () => {
+export default function BlogSection() {
+  // Blog post data for mapping
+  const blogPosts = [
+    {
+      id: 1,
+      image: "/image-3.png", // Using placeholder paths for images
+      categories: ["AI", "Robotics"],
+      title:
+        "Unlocking the potential of AI: Robotics applied to African market.",
+      date: "February 17, 2025",
+      readTime: "3 min read",
+    },
+    {
+      id: 2,
+      image: null, // This card has a special background with spiral sphere
+      categories: ["AI", "Testimonies"],
+      title: "Case studies from companies that have adopted our solutions.",
+      date: "February 15, 2025",
+      readTime: "4 min read",
+      specialBackground: true,
+    },
+    {
+      id: 3,
+      image: "/image-2.png", // Using placeholder path
+      categories: ["Tech trends"],
+      title: "Interviews and analyses on AI  and innovation trends.",
+      date: "February 12, 2025",
+      readTime: "4 min read",
+      gradientBackground: true,
+    },
+  ];
+
   return (
-    <div className="bg-[#0a0b1a] text-white  min-h-screen flex flex-col">
-      {/* Stats Section */}
-
-      <div className="relative bg-[#09091a] text-white py-16 overflow-hidden">
-      {/* Background blur effect */}
-      <div 
-        className="absolute inset-0 z-0" 
-        style={{
-          backgroundImage: 'radial-gradient(circle at 50% 10%, rgba(30, 64, 175, 0.25) 0%, rgba(15, 23, 42, 0) 50%)',
-          filter: 'blur(60px)',
-        }}
-      />
-      
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
-          <div className="col-span-1 flex justify-center">
-            <h2 className="text-3xl font-bold leading-tight">
-              Driving<br />
-              success<br />
-              with data
-            </h2>
-          </div>
-          
-          <div className="col-span-1 text-center">
-            <div className="text-6xl font-bold mb-1">98<span className="text-4xl">%</span></div>
-            <div className="text-sm text-gray-400">Clients satisfaction</div>
-          </div>
-          
-          <div className="col-span-1 text-center">
-            <div className="text-6xl font-bold mb-1">35<span className="text-4xl">%</span></div>
-            <div className="text-sm text-gray-400">Decrease expenses</div>
-          </div>
-          
-          <div className="col-span-1 text-center">
-            <div className="text-6xl font-bold mb-1">8.3<span className="text-4xl">M</span></div>
-            <div className="text-sm text-gray-400">Money raised</div>
-          </div>
+    <div className="flex flex-col items-center gap-20">
+      {/* Header Section */}
+      <div className="relative w-[521px] h-24">
+        <div className="absolute w-[517px] h-[55px] top-[41px] left-0 [background:linear-gradient(95deg,rgba(235,241,255,1)_0%,rgba(179,192,222,1)_100%)] [-webkit-background-clip:text] bg-clip-text [-webkit-text-fill-color:transparent] [text-fill-color:transparent] [font-family:'Arial_Rounded_MT_Bold-Regular',Helvetica] font-normal text-transparent text-[46px] text-center tracking-[-0.92px] leading-[55.2px]">
+          Blog &amp; News
+        </div>
+        <div className="absolute top-0 left-[126px] [font-family:'Arial-Regular',Helvetica] font-normal text-color-palette-secondary text-[15px] text-center tracking-[1.50px] leading-[27.0px] whitespace-nowrap">
+          MONITORING AND INNOVATION
         </div>
       </div>
-    </div>
-      {/* Testimonials Section */}
-      <section className="container mx-auto py-16 px-4">
-        <div className="text-center mb-12">
-          <div className="text-blue-500 text-sm uppercase tracking-wider mb-2">TESTIMONIALS</div>
-          <h2 className="text-3xl font-bold">Satisfied voices of success</h2>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Testimonial 1 */}
-          <div className="bg-[#0d0f2b] p-6 rounded-lg">
-            <div className="flex mb-4">
-              {Array(5).fill(0).map((_, i) => (
-                <svg key={i} className="w-5 h-5 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-6">&quot;Game-changing AI solution! Boosted efficiency and data-driven insights. Highly recommended!&quot;</p>
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                <Image src="/mia-baker.jpg" alt="Mia Baker" width={48} height={48} className="rounded-full" />
-              </div>
-              <div>
-                <div className="font-medium">Mia Baker</div>
-                <div className="text-sm text-gray-400">Marketing Manager at Reliance</div>
-              </div>
-            </div>
-          </div>
+      {/* Blog Cards Section */}
+      <div className="flex items-start gap-[34px]">
+        {blogPosts.map((post) => (
+          <Card
+            key={post.id}
+            className="w-[364px] h-[542px] rounded-[18px] border-line-gray"
+          >
+            <CardContent className="p-6">
+              <div className="relative w-[316px] h-[491px]">
+                {/* Card Image/Background */}
+                {post.specialBackground ? (
+                  <div className="w-[314px] h-[216px] rounded-[14px] overflow-hidden [background:linear-gradient(180deg,rgba(107,107,165,1)_0%,rgba(156,222,233,1)_100%)]">
+                    <div className="relative w-[386px] h-[659px] top-[-217px] -left-11 rotate-[75.00deg]">
+                      <div className="relative h-[659px]">
+                        <div className="absolute w-[91px] h-[262px] top-[389px] left-[39px] rounded-[45.4px/130.95px] rotate-[18.63deg] blur-sm [background:radial-gradient(50%_50%_at_-41%_37%,rgba(245,186,255,1)_0%,rgba(245,186,255,0)_100%),radial-gradient(50%_50%_at_76%_60%,rgba(255,255,251,1)_0%,rgba(239,177,255,0)_100%),radial-gradient(50%_50%_at_12%_57%,rgba(57,207,255,1)_0%,rgba(57,207,255,0)_100%),radial-gradient(50%_50%_at_37%_61%,rgba(57,231,255,1)_0%,rgba(57,231,255,0)_100%),radial-gradient(50%_50%_at_93%_56%,rgba(57,160,255,1)_0%,rgba(57,160,255,0)_100%),radial-gradient(50%_50%_at_90%_48%,rgba(31,253,213,1)_0%,rgba(31,253,213,0)_100%),linear-gradient(0deg,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_100%)]" />
+                        <div className="absolute w-[91px] h-[262px] top-2 left-64 rounded-[45.4px/130.95px] rotate-[18.63deg] blur-sm [background:radial-gradient(50%_50%_at_-41%_37%,rgba(245,186,255,1)_0%,rgba(245,186,255,0)_100%),radial-gradient(50%_50%_at_76%_60%,rgba(255,255,251,1)_0%,rgba(239,177,255,0)_100%),radial-gradient(50%_50%_at_12%_57%,rgba(57,207,255,1)_0%,rgba(57,207,255,0)_100%),radial-gradient(50%_50%_at_37%_61%,rgba(57,231,255,1)_0%,rgba(57,231,255,0)_100%),radial-gradient(50%_50%_at_93%_56%,rgba(57,160,255,1)_0%,rgba(57,160,255,0)_100%),radial-gradient(50%_50%_at_90%_48%,rgba(31,253,213,1)_0%,rgba(31,253,213,0)_100%),linear-gradient(0deg,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_100%)]" />
+                        <div className="absolute w-[126px] h-[126px] top-[225px] left-[115px] rounded-[62.85px] blur-sm [background:radial-gradient(50%_50%_at_-41%_37%,rgba(245,186,255,1)_0%,rgba(245,186,255,0)_100%),radial-gradient(50%_50%_at_76%_60%,rgba(255,255,251,1)_0%,rgba(239,177,255,0)_100%),radial-gradient(50%_50%_at_12%_57%,rgba(57,207,255,1)_0%,rgba(57,207,255,0)_100%),radial-gradient(50%_50%_at_37%_61%,rgba(57,231,255,1)_0%,rgba(57,231,255,0)_100%),radial-gradient(50%_50%_at_93%_56%,rgba(57,160,255,1)_0%,rgba(57,160,255,0)_100%),radial-gradient(50%_50%_at_90%_48%,rgba(31,253,213,1)_0%,rgba(31,253,213,0)_100%),linear-gradient(0deg,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_100%)]" />
+                        <div className="absolute w-[140px] h-[140px] top-[257px] left-[123px]">
+                          <div className="relative w-[210px] h-[210px] top-[-35px] left-[-35px]">
+                            <Image
+                              className="absolute w-[172px] h-[172px] top-[19px] left-[19px] rotate-[-75.00deg]"
+                              alt="Spiral sphere"
+                              src="/path/to/image1.png" // Remplace par le bon chemin
+                              width={172}
+                              height={172}
+                            />
+                            <Image
+                              className="absolute w-[172px] h-[172px] top-[19px] left-[19px] rotate-[-75.00deg]"
+                              alt="Spiral sphere"
+                              src="/path/to/image2.png" // Remplace par le bon chemin
+                              width={172}
+                              height={172}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : post.gradientBackground ? (
+                  <div className="w-[314px] h-[216px] rounded-[14px] overflow-hidden [background:radial-gradient(50%_50%_at_76%_51%,rgba(0,255,200,1)_0%,rgba(0,80,163,1)_100%)]">
+                    <Image
+                      className="w-[188px] h-[215px] mt-px ml-[69px]"
+                      alt="Blog image"
+                      src={post.image}
+                      width={188}
+                      height={215}
+                    />
+                  </div>
+                ) : (
+                  <Image
+                    className="w-[314px] h-[216px] rounded-[14px]"
+                    alt="Blog image"
+                    src={post.image ?? "/fallback-image.jpg"}
+                    width={314}
+                    height={216}
+                  />
+                )}
 
-          {/* Testimonial 2 */}
-          <div className="bg-[#0d0f2b] p-6 rounded-lg">
-            <div className="flex mb-4">
-              {Array(5).fill(0).map((_, i) => (
-                <svg key={i} className="w-5 h-5 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-6">&quot;This AI platform streamlined our operations and boosted productivity. Highly recommend! &quot;</p>
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                <Image src="/allison-walt.jpg" alt="Allison Walt" width={48} height={48} className="rounded-full" />
-              </div>
-              <div>
-                <div className="font-medium">Allison Walt</div>
-                <div className="text-sm text-gray-400">Product Manager at Orbital</div>
-              </div>
-            </div>
-          </div>
+                {/* Categories */}
+                <div className="flex items-start gap-2.5 mt-[30px]">
+                  {post.categories.map((category, index) => (
+                    <Badge
+                      key={index}
+                      className="px-3 py-0.5 bg-black rounded-[50px]"
+                    >
+                      <span className="[font-family:'Manrope-Regular',Helvetica] font-normal text-gray text-[13px] tracking-[1.30px] leading-[23.4px]">
+                        {category}
+                      </span>
+                    </Badge>
+                  ))}
+                </div>
 
-          {/* Testimonial 3 (partially visible in the image) */}
-          <div className="bg-[#0d0f2b] p-6 rounded-lg">
-            <div className="flex mb-4">
-              {Array(5).fill(0).map((_, i) => (
-                <svg key={i} className="w-5 h-5 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-            <p className="text-gray-300 mb-6">&quot;AI platform! Streamlined operations and boosted productivity.&quot;</p>
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
-                <Image src="/user-avatar.jpg" alt="User" width={48} height={48} className="rounded-full" />
+                {/* Title */}
+                <div className="w-[314px] mt-[15px] [background:linear-gradient(95deg,rgba(235,241,255,1)_0%,rgba(179,192,222,1)_100%)] [-webkit-background-clip:text] bg-clip-text [-webkit-text-fill-color:transparent] [text-fill-color:transparent] [font-family:'Manrope-Medium',Helvetica] font-medium text-transparent text-[28px] tracking-[-0.56px] leading-[38.1px]">
+                  {post.title}
+                </div>
+
+                {/* Separator */}
+                <Separator className="w-[314px] h-px mt-[132px] bg-line-gray" />
+
+                {/* Date and Read Time */}
+                <div className="flex items-center gap-3 mt-[26px]">
+                  <div className="[font-family:'Manrope-Regular',Helvetica] font-normal text-gray text-sm tracking-[0] leading-[25.2px]">
+                    {post.date}
+                  </div>
+                  <div className="w-[3px] h-[3px] bg-gray rounded-[1.5px]" />
+                  <div className="[font-family:'Manrope-Regular',Helvetica] font-normal text-gray text-sm tracking-[0] leading-[25.2px]">
+                    {post.readTime}
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="font-medium">User Name</div>
-                <div className="text-sm text-gray-400">Position at Company</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <ContactUs/>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Read More Button */}
+      <Button
+        variant="outline"
+        className="min-w-[200px] h-[50px] rounded-full border-line-gray text-gray [font-family:'Manrope-Medium',Helvetica]"
+      >
+        Read More
+        <ChevronRight className="ml-2 h-4 w-4" />
+      </Button>
     </div>
   );
-};
-
-export default BlogSection;
+}

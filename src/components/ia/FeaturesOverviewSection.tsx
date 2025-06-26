@@ -1,3 +1,5 @@
+"use client";
+
 import { BarChart3, Cloud, Globe, Users, Zap } from "lucide-react";
 import React from "react";
 

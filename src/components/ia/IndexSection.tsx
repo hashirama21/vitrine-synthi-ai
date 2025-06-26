@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import React from "react";
 import FAQSection from "../Faq";
 import AboutUsSection from "./AboutUsSection";
@@ -8,7 +11,6 @@ import FeaturesDisplaySection from "./FeatureDisplaySection";
 import FeaturesOverviewSection from "./FeaturesOverviewSection";
 import NavigationMenuSection from "./NavogationMenuSection";
 import VisionStatementSection from "./VisionStatementSection";
-
 
 export default function About() {
   return (
@@ -34,7 +36,14 @@ export default function About() {
             <AssetsDisplaySection />
             <CallToActionSection />
             <FAQSection />
-            <img className="w-full" alt="Footer content" src="" />
+            <Image
+              className="w-full"
+              alt="Footer content"
+              src="/chemin/vers/image.jpg"
+              layout="responsive"
+              width={1200} 
+              height={400} 
+            />
           </div>
         </div>
       </div>

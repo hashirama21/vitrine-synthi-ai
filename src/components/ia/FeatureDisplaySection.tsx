@@ -1,3 +1,6 @@
+"use client";
+
+import Image from 'next/image';
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -21,13 +24,13 @@ const teamMembers = [
     id: 2,
     name: "Fokam Minyim",
     role: "Full-Stack Developer",
-    image: "", // Placeholder for image
+    image: "public/founder/melvin.png", // Placeholder for image
   },
   {
     id: 3,
     name: "John Doe",
     role: "Frontend Developer",
-    image: "", // Placeholder for image
+    image: "public/founder/melvin.png", // Placeholder for image
   },
   {
     id: 4,
@@ -65,6 +68,7 @@ export default function FeaturesDisplaySection()  {
                 <Card className="h-[450px] flex flex-col justify-end rounded-3xl border-none [background:linear-gradient(180deg,rgba(11,14,35,0)_0%,rgba(11,14,35,1)_100%)]">
                   <CardContent className="p-4">
                     <div className="flex flex-col items-start gap-2.5">
+                     
                       <h3 className="font-normal text-light-gray text-2xl tracking-[-0.48px] leading-[43.2px]">
                         {member.name}
                       </h3>

@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -20,10 +23,12 @@ export default function NavigationMenuSection() {
   return (
     <header className="flex items-center justify-between py-8 px-8 md:px-16 lg:px-24 w-full">
       {/* Logo */}
-      <img
+      <Image
         className="h-[50px] w-auto object-contain"
         alt="Synthi AI Logo"
-        src=""
+        src="public/logo.png"
+        width={100} 
+        height={50} 
       />
 
       {/* Navigation Menu */}
