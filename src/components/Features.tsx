@@ -1,191 +1,610 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MoreHorizontal, ArrowRight } from "lucide-react";
+import { useEffect, useRef, memo } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
 
-// Initialiser GSAP ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
+// Register GSAP plugins
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-export default function Features() {
-  const textRef = useRef(null);
-  const statsRef = useRef(null);
-  const cardsRef = useRef(null);
+// Statistics data
+const STATISTICS_DATA = {
+  totalActivity: 436,
+  income: 305,
+  expense: 58,
+};
+
+// Memoize the animated chart component
+const AnimatedChart = memo(() => {
+  const chartRef = useRef<SVGSVGElement>(null);
+  const incomeArcRef = useRef<SVGCircleElement>(null);
+  const expenseArcRef = useRef<SVGCircleElement>(null);
+  const totalNumberRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // Animation pour le texte
-    gsap.from(textRef.current, {
-      opacity: 0,
-      y: -50,
-      duration: 1,
-      scrollTrigger: {
-        trigger: textRef.current,
-        start: 'top 80%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reverse',
-      },
+    if (!chartRef.current || !incomeArcRef.current || !expenseArcRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Create timeline for coordinated animations
+      const tl = gsap.timeline();
+
+      // Animate income arc
+      tl.fromTo(
+        incomeArcRef.current,
+        {
+          strokeDasharray: "0 251.2",
+          opacity: 0,
+        },
+        {
+          strokeDasharray: "188.4 62.8", // 75% of circumference
+          opacity: 1,
+          duration: 1.5,
+          ease: "power3.out",
+        }
+      );
+
+      // Animate expense arc
+      tl.fromTo(
+        expenseArcRef.current,
+        {
+          strokeDasharray: "0 251.2",
+          opacity: 0,
+        },
+        {
+          strokeDasharray: "50.24 201", // 20% of circumference
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "-=1"
+      );
+
+      // Animate total number
+      if (totalNumberRef.current) {
+        tl.fromTo(
+          totalNumberRef.current,
+          {
+            textContent: 0,
+            opacity: 0,
+            scale: 0.8,
+          },
+          {
+            textContent: STATISTICS_DATA.totalActivity,
+            opacity: 1,
+            scale: 1,
+            duration: 2,
+            ease: "power2.out",
+            snap: { textContent: 1 },
+          },
+          "-=1.5"
+        );
+      }
+
+      // Subtle rotation animation
+      gsap.to(chartRef.current, {
+        rotation: 5,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
     });
 
-    // Animation pour la carte de statistiques
-    gsap.from(statsRef.current, {
-      opacity: 0,
-      scale: 0.8,
-      rotation: -10,
-      duration: 1.5,
-      scrollTrigger: {
-        trigger: statsRef.current,
-        start: 'top 80%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reverse',
-      },
-    });
-
-    // Animation pour les cartes de crédit
-    gsap.from(cardsRef.current, {
-      opacity: 0,
-      y: 50,
-      rotation: 10,
-      duration: 1.5,
-      scrollTrigger: {
-        trigger: cardsRef.current,
-        start: 'top 80%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reverse',
-      },
-    });
-
-    // Animation continue pour les cartes de crédit
-    gsap.to(cardsRef.current, {
-      y: 10,
-      rotation: 5,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut',
-    });
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section className="py-20 md:py-32 bg-[#0a0a1a]">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Left Content Section */}
-          <div ref={textRef} className="lg:w-1/2">
-            <h2 className="text-sm uppercase text-blue-400 tracking-wider mb-3">
-              AI-DRIVEN SOLUTIONS
-            </h2>
-            <h3 className="text-3xl md:text-4xl font-bold mb-6">
-              Artificial intelligence for a sustainable future
-            </h3>
-            <div className="text-gray-300 space-y-4">
-              <p>
-                With the right AI-powered solutions, businesses can prioritize sustainable growth while maintaining a competitive edge in today&apos;s dynamic markets.
+    <div className="relative w-[139px] h-[91px]">
+      <svg ref={chartRef} className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="incomeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#2663ff" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#4a90e2" stopOpacity="1" />
+          </linearGradient>
+          <linearGradient id="expenseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f6554b" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#ff8a80" stopOpacity="1" />
+          </linearGradient>
+          <filter id="chartGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Background circle */}
+        <circle
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.05)"
+          strokeWidth="8"
+        />
+
+        {/* Income arc */}
+        <circle
+          ref={incomeArcRef}
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="url(#incomeGradient)"
+          strokeWidth="8"
+          strokeDasharray="0 251.2"
+          strokeDashoffset="0"
+          transform="rotate(-90 50 50)"
+          filter="url(#chartGlow)"
+          className="drop-shadow-lg"
+        />
+
+        {/* Expense arc */}
+        <circle
+          ref={expenseArcRef}
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="url(#expenseGradient)"
+          strokeWidth="8"
+          strokeDasharray="0 251.2"
+          strokeDashoffset="-188.4"
+          transform="rotate(-90 50 50)"
+          filter="url(#chartGlow)"
+          className="drop-shadow-lg"
+        />
+      </svg>
+
+      {/* Center content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-['Manrope'] font-normal text-gray text-[9px] text-center tracking-[0] leading-[16.2px]">
+          Total Activity
+        </span>
+        <span
+          ref={totalNumberRef}
+          className="font-['Manrope'] font-semibold text-light-gray text-2xl text-center tracking-[0] leading-[43.2px]"
+        >
+          0
+        </span>
+      </div>
+    </div>
+  );
+});
+
+AnimatedChart.displayName = "AnimatedChart";
+
+// Memoize credit cards component
+const CreditCards = memo(() => {
+  const card1Ref = useRef<HTMLDivElement>(null);
+  const card2Ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!card1Ref.current || !card2Ref.current) return;
+
+    const ctx = gsap.context(() => {
+      // 3D card animations
+      gsap.set([card1Ref.current, card2Ref.current], {
+        transformPerspective: 1000,
+        transformStyle: "preserve-3d",
+      });
+
+      // Card 1 animation
+      gsap.to(card1Ref.current, {
+        rotateY: 10,
+        rotateX: -5,
+        y: -10,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      // Card 2 animation
+      gsap.to(card2Ref.current, {
+        rotateY: -10,
+        rotateX: 5,
+        y: 10,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 2,
+      });
+
+      // Hover effects
+      [card1Ref.current, card2Ref.current].forEach((card) => {
+        card!.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            scale: 1.05,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card!.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            scale: 1,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <>
+      {/* Credit Card 1 */}
+      <div
+        ref={card1Ref}
+        className="absolute w-80 h-[201px] top-[35px] left-[245px] rounded-xl shadow-2xl overflow-hidden cursor-pointer transition-all"
+      >
+        <div className="w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 p-6 flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div className="text-white/90">
+              <p className="text-xs font-light">Premium Card</p>
+              <p className="text-sm font-medium mt-1">Peter White</p>
+            </div>
+            <div className="text-white/60">
+              <svg width="50" height="30" viewBox="0 0 50 30" fill="currentColor">
+                <circle cx="20" cy="15" r="10" opacity="0.8" />
+                <circle cx="30" cy="15" r="10" opacity="0.8" />
+              </svg>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-white text-lg font-medium tracking-wider">
+              •••• •••• •••• 3456
+            </p>
+            <div className="flex justify-between items-center">
+              <p className="text-white/70 text-xs">03/26</p>
+              <p className="text-white/70 text-xs">DEBIT</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Credit Card 2 */}
+      <div
+        ref={card2Ref}
+        className="absolute w-[400px] h-[251px] top-[216px] left-[121px] rounded-xl shadow-2xl overflow-hidden cursor-pointer transition-all"
+      >
+        <div className="w-full h-full bg-gradient-to-br from-pink-500 via-purple-600 to-violet-800 p-8 flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div className="text-white/90">
+              <p className="text-sm font-light">Platinum Card</p>
+              <p className="text-base font-medium mt-1">Emre Huayde Bastas</p>
+            </div>
+            <div className="text-white/60">
+              <svg width="60" height="36" viewBox="0 0 60 36" fill="currentColor">
+                <circle cx="24" cy="18" r="12" opacity="0.8" />
+                <circle cx="36" cy="18" r="12" opacity="0.8" />
+              </svg>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <p className="text-white text-xl font-medium tracking-wider">
+              •••• •••• •••• 7890
+            </p>
+            <div className="flex justify-between items-center">
+              <p className="text-white/70 text-sm">10/26</p>
+              <p className="text-white/70 text-sm">CREDIT</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+});
+
+CreditCards.displayName = "CreditCards";
+
+export default function FinanceOverview() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const leftContentRef = useRef<HTMLDivElement>(null);
+  const rightContentRef = useRef<HTMLDivElement>(null);
+  const statsCardRef = useRef<HTMLDivElement>(null);
+  const textElementsRef = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Create master timeline
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%",
+          end: "bottom 30%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Animate section label
+      masterTl.fromTo(
+        ".section-label",
+        {
+          opacity: 0,
+          y: -20,
+          letterSpacing: "0.3em",
+        },
+        {
+          opacity: 1,
+          y: 0,
+          letterSpacing: "0.1em",
+          duration: 1,
+          ease: "power3.out",
+        }
+      );
+
+      // Animate main heading with gradient effect
+      masterTl.fromTo(
+        ".main-heading",
+        {
+          opacity: 0,
+          y: 30,
+          scale: 0.95,
+          filter: "blur(10px)",
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 1.2,
+          ease: "power3.out",
+        },
+        "-=0.5"
+      );
+
+      // Animate paragraph
+      masterTl.fromTo(
+        ".description-text",
+        {
+          opacity: 0,
+          x: -30,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "-=0.8"
+      );
+
+      // Animate button
+      masterTl.fromTo(
+        ".learn-more-btn",
+        {
+          opacity: 0,
+          y: 20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+        },
+        "-=0.6"
+      );
+
+      // Animate statistics card with 3D effect
+      gsap.fromTo(
+        statsCardRef.current,
+        {
+          opacity: 0,
+          rotateY: -90,
+          x: -100,
+          scale: 0.8,
+        },
+        {
+          opacity: 1,
+          rotateY: 0,
+          x: 0,
+          scale: 1,
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: rightContentRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+
+      // Floating animation for stats card
+      gsap.to(statsCardRef.current, {
+        y: -10,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      // Animate statistics numbers
+      gsap.fromTo(
+        [".income-number", ".expense-number"],
+        {
+          textContent: 0,
+        },
+        {
+          textContent: (index) => index === 0 ? STATISTICS_DATA.income : STATISTICS_DATA.expense,
+          duration: 2,
+          ease: "power2.out",
+          snap: { textContent: 1 },
+          scrollTrigger: {
+            trigger: statsCardRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+
+      // Background gradient animation
+      gsap.to(".gradient-bg", {
+        backgroundPosition: "100% 100%",
+        duration: 10,
+        repeat: -1,
+        yoyo: true,
+        ease: "none",
+      });
+
+      // Parallax effect for right section
+      gsap.to(rightContentRef.current, {
+        yPercent: -5,
+        ease: "none",
+        scrollTrigger: {
+          trigger: rightContentRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen bg-color-palette-dark-bg overflow-hidden py-20"
+    >
+      {/* Animated background gradient */}
+      <div 
+        className="gradient-bg absolute inset-0 opacity-20"
+        style={{
+          background: "radial-gradient(circle at 20% 50%, rgba(82, 134, 246, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(21, 69, 201, 0.3) 0%, transparent 50%)",
+          backgroundSize: "200% 200%",
+          backgroundPosition: "0% 0%",
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-start gap-2.5 container mx-auto px-4">
+        <div className="relative w-full max-w-[1270px] h-auto md:h-[467px] flex flex-col md:flex-row mx-auto">
+          {/* Left Section - Company Info */}
+          <div 
+            ref={leftContentRef}
+            className="w-full md:w-[596px] md:h-[372px] md:ml-[55px] flex flex-col justify-center"
+          >
+            <div className="flex flex-col gap-[30px]">
+              <div className="flex flex-col gap-[41px]">
+                <span className="section-label font-['Arial'] font-normal text-color-palette-secondary text-[15px] tracking-[1.50px] leading-[27.0px] uppercase">
+                  AI-DRIVEN COMPANY
+                </span>
+
+                <h1 className="main-heading bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent font-['Arial_Rounded_MT_Bold'] text-[46px] tracking-[-0.92px] leading-[55.2px]">
+                  Artificial intelligence for a<br />
+                  sustainable future
+                </h1>
+              </div>
+
+              <p className="description-text font-['Arial'] font-normal text-gray text-base tracking-[0] leading-[28.8px] max-w-[522px]">
+                Synthi-AI is a leading technology company specializing in
+                providing advanced solutions in artificial intelligence (AI),
+                custom software development, and robotics. we are passionate about
+                harnessing the power of AI to transform businesses and drive
+                innovation.
               </p>
-              <p>
-                Our platform combines sophisticated AI algorithms with deep domain expertise to transform your business operations and drive meaningful results.
-              </p>
-              <p>
-                Each of our solutions represents years of research and development to provide the most advanced AI capabilities available.
-              </p>
-              <a href="/solutions" className="inline-block mt-6 text-blue-400 hover:text-blue-300 transition-colors">
-                Learn More
-                <svg className="inline-block ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
+
+              <Button
+                variant="outline"
+                className="learn-more-btn h-[50px] min-w-[200px] flex items-center justify-center gap-2 border border-line-gray rounded-md hover:bg-color-palette-primary/10 hover:border-color-palette-primary transition-all duration-300 group"
+              >
+                <span className="group-hover:text-color-palette-primary transition-colors">
+                  Learn More
+                </span>
+                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 group-hover:text-color-palette-primary transition-all" />
+              </Button>
             </div>
           </div>
 
-          {/* Right Content Section with Autonomous 3D Animations */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-8 bg-[#0d0d1a] text-white rounded-xl">
-            {/* Statistics Card with Continuous Animation */}
-            <div ref={statsRef} className="bg-[#171727] text-white p-6 rounded-xl shadow-lg w-full md:w-64">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">Statistics</h3>
-                <button className="text-gray-400">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="6" r="2" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                    <circle cx="12" cy="18" r="2" fill="currentColor"/>
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="relative w-28 h-28 flex items-center justify-center mb-2">
-                  <svg className="absolute w-full h-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="#333345" strokeWidth="8" fill="none" />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      stroke="url(#gradient)"
-                      strokeWidth="8"
-                      strokeDasharray="251.2"
-                      strokeDashoffset="100"
-                      fill="none"
-                    />
-                    <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#4080ff" />
-                        <stop offset="50%" stopColor="#ff4f70" />
-                        <stop offset="100%" stopColor="#ffaa00" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <span className="text-3xl font-bold">436</span>
-                </div>
-                
-                <div className="flex justify-between w-full mt-2 text-xs">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-blue-400 mr-2"></div>
-                      <span>Income</span>
-                    </div>
-                    <p className="font-semibold text-lg ml-4">305</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 rounded-full bg-red-400 mr-2"></div>
-                      <span>Expense</span>
-                    </div>
-                    <p className="font-semibold text-lg ml-4">98</p>
-                  </div>
-                </div>
-                
-                <button className="mt-6 bg-[#20203a] hover:bg-[#2a2a4a] text-white py-2 px-4 rounded-lg w-full flex items-center justify-center gap-2">
-                  <span>All Activity</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 19V5M5 12l7-7 7 7" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+          {/* Right Section - Statistics and Cards */}
+          <div 
+            ref={rightContentRef}
+            className="w-full md:w-[565px] h-auto md:h-[467px] relative mt-8 md:mt-0"
+          >
+            <div className="relative h-full">
+              {/* Credit Cards */}
+              <CreditCards />
 
-            {/* Credit Cards with Continuous 3D Animation */}
-            <div ref={cardsRef} className="relative h-80 w-80 flex items-center justify-center perspective-1000">
-              {/* First Credit Card */}
-              <div className="absolute transform rotate-6 z-10">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-64 h-40 rounded-xl p-4 shadow-xl flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <div className="text-xs text-white opacity-80">Peter White</div>
-                  </div>
-                  <div className="text-base font-medium text-white">**** **** **** 0000</div>
-                  <div className="text-xs text-white opacity-80">03/26 - Debit</div>
-                </div>
-              </div>
+              {/* Statistics Card */}
+              <Card 
+                ref={statsCardRef}
+                className="absolute w-72 h-[344px] top-0 left-0 rounded-[14px] border border-solid border-line-gray backdrop-blur-[10px] backdrop-brightness-[100%] bg-color-palette-dark-bg-2/80 shadow-2xl"
+                style={{
+                  transformStyle: "preserve-3d",
+                  perspective: 1000,
+                }}
+              >
+                <CardContent className="p-0 h-full relative">
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-color-palette-primary/5 to-color-palette-secondary/5 rounded-[14px]" />
 
-              {/* Second Credit Card */}
-              <div className="absolute transform -rotate-6 z-20">
-                <div className="bg-gradient-to-r from-pink-500 to-purple-600 w-64 h-40 rounded-xl p-4 shadow-xl flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <div className="text-xs text-white opacity-80">Emre Huayde Bastas</div>
+                  {/* Card Header */}
+                  <div className="relative flex justify-between items-center p-[22px]">
+                    <h3 className="font-['Manrope'] font-medium text-light-gray text-base tracking-[0] leading-[28.8px]">
+                      Statistics
+                    </h3>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="w-6 h-6 p-0 hover:bg-color-palette-primary/10 transition-colors"
+                    >
+                      <MoreHorizontal className="w-5 h-5 text-light-gray" />
+                    </Button>
                   </div>
-                  <div className="text-base font-medium text-white">**** **** **** 0000</div>
-                  <div className="text-xs text-white opacity-80">10/26 - Credit</div>
-                </div>
-              </div>
+
+                  {/* Circular Chart */}
+                  <div className="absolute w-[135px] h-[101px] top-[89px] left-[75px] flex items-center justify-center">
+                    <AnimatedChart />
+                  </div>
+
+                  {/* Income Indicator */}
+                  <div className="absolute w-[54px] h-[42px] top-[193px] left-[66px] flex items-start">
+                    <div className="w-2 h-2 mt-1.5 bg-[#2663ff] rounded-full animate-pulse shadow-lg shadow-[#2663ff]/50" />
+                    <div className="ml-3.5">
+                      <span className="block font-['Manrope'] font-normal text-[#c2cde7] text-[11px] tracking-[0] leading-[18.7px]">
+                        Income
+                      </span>
+                      <span className="income-number block font-['Manrope'] font-bold text-light-gray text-[13px] leading-[22.1px]">
+                        0
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Expense Indicator */}
+                  <div className="absolute w-16 h-[43px] top-48 left-[158px] flex items-start">
+                    <div className="w-2 h-2 mt-[7px] bg-[#f6554b] rounded-full animate-pulse shadow-lg shadow-[#f6554b]/50" />
+                    <div className="ml-3.5">
+                      <span className="block font-['Manrope'] font-normal text-[#c2cde7] text-xs tracking-[0] leading-[20.4px]">
+                        Expense
+                      </span>
+                      <span className="expense-number block font-['Manrope'] font-bold text-light-gray text-[13px] leading-[22.1px]">
+                        0
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* All Activity Button */}
+                  <div className="absolute w-[200px] h-11 top-[259px] left-[43px]">
+                    <Button
+                      variant="outline"
+                      className="w-full h-full rounded border border-solid border-line-gray hover:bg-color-palette-primary/10 hover:border-color-palette-primary font-['Manrope'] font-semibold text-gray hover:text-color-palette-primary text-[13px] text-center transition-all duration-300"
+                    >
+                      All Activity
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

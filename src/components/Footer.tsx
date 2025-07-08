@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaTwitter, FaInstagram, FaLinkedin, FaDiscord, FaYoutube, FaTiktok } from 'react-icons/fa';
+import { FaTwitter, FaInstagram, FaLinkedin, FaDiscord, FaYoutube, FaTiktok, FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
   return (
@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Useful */}
+          {/* Useful 
           <div className="ml-40">
             <h3 className="text-blue-500 font-semibold text-lg mb-6">Useful</h3>
             <ul className="space-y-8">
@@ -77,7 +77,29 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
+
+        {/* Useful */}
+          <div className="ml-35">
+             <h3 className="text-blue-500 font-semibold text-lg mb-6">Contact</h3>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li className="flex items-start gap-2">
+                <FaMapMarkerAlt className="mt-1 text-blue-400" />
+                <span>Headquarters: Akwa, Douala, Cameroon</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaPhone className="text-blue-400" />
+                <a href="tel:+237690000000" className="hover:text-white transition-colors">+237 680232764/620207980</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaEnvelope className="text-blue-400" />
+                <a href="mailto:contact@synthi-ai.org" className="hover:text-white transition-colors">contact@synthi-ai.com</a>
+              </li>
+            </ul>
+          </div>
+        </div> 
+
+        
 
         {/* Copyright */}
         <div className="border-t border-gray-800 mt-12 pt-6 text-xs text-gray-500 text-center">
