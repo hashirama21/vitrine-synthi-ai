@@ -110,13 +110,21 @@ jobs:
       run: |
         # Extraire le premier tag de l'output du build (généralement celui avec 'latest')
         FULL_TAGS="${{ needs.build-and-push.outputs.image-tag }}"
-        SINGLE_TAG=$(echo "$FULL_TAGS" | head -n1 | tr -d '\n\r')
+        echo "Full tags output: $FULL_TAGS"
+        SINGLE_TAG=$(echo "$FULL_TAGS" | head -n1 | tr -d '\n\r' | xargs)
         echo "Selected image tag: $SINGLE_TAG"
         echo "image-tag=$SINGLE_TAG" >> $GITHUB_OUTPUT
       
     - name: Pull image for scanning
       run: |
-        docker pull ${{ steps.extract-tag.outputs.image-tag }}
+        IMAGE_TAG="${{ steps.extract-tag.outputs.image-tag }}"
+        echo "Pulling image: $IMAGE_TAG"
+        if [ -n "$IMAGE_TAG" ]; then
+          docker pull "$IMAGE_TAG"
+        else
+          echo "Error: IMAGE_TAG is empty"
+          exit 1
+        fi
       
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
@@ -127,10 +135,11 @@ jobs:
         
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
-      if: always()
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
         sarif_file: 'trivy-results.sarif'
         category: 'trivy'
+      continue-on-error: true
  
   deploy-staging:
     needs: [build-and-push, security-scan]
