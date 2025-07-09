@@ -149,7 +149,7 @@ jobs:
     - name: Checkout GitOps repo
       uses: actions/checkout@v4
       with:
-        repository: synthi-ai/gitops-configs
+        repository: SYNTHI-Hub/gitops-config
         token: ${{ secrets.GITOPS_TOKEN }}
         path: gitops
         
@@ -183,7 +183,7 @@ jobs:
     - name: Checkout GitOps repo
       uses: actions/checkout@v4
       with:
-        repository: synthi-ai/gitops-configs
+        repository: SYNTHI-Hub/gitops-config
         token: ${{ secrets.GITOPS_TOKEN }}
         path: gitops
         
