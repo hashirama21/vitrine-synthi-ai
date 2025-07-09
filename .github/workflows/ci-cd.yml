@@ -7,7 +7,6 @@ on:
     branches: [ main ]
 
 env:
-  HARBOR_REGISTRY: registry.synthi-ai.org:8453
   HARBOR_PROJECT: synthi-ai
   IMAGE_NAME: vitrine-synthi-ai
   KUSTOMIZE_VERSION: v5.0.3
@@ -62,7 +61,7 @@ jobs:
     - name: Log in to Harbor
       uses: docker/login-action@v3
       with:
-        registry: ${{ env.HARBOR_REGISTRY }}
+        registry: ${{ secrets.HARBOR_REGISTRY }}
         username: ${{ secrets.HARBOR_USERNAME }}
         password: ${{ secrets.HARBOR_PASSWORD }}
         
@@ -70,7 +69,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMAGE_NAME }}
+        images: ${{ secrets.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMAGE_NAME }}
         tags: |
           type=ref,event=branch
           type=sha,prefix={{branch}}-
@@ -88,42 +87,53 @@ jobs:
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
 
-  #security-scan:
-  #  needs: build-and-push
-  #  runs-on: ubuntu-latest
-  #  name: Security Scan
-  #  
-  #  steps:
-  #  - name: Checkout code
-  #    uses: actions/checkout@v4
-  
-  #  - name: Login to Harbor Registry
-  #    run: |
-  #     echo "${{ secrets.HARBOR_PASSWORD }}" | docker login registry.synthi-ai.org:8453 \
-  #      -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
-  #    
-  #  - name: Set image tag
-  #    id: set-image
-  #    run: |
-  #      IMAGE_TAG="registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest"
-  #      echo "Scanning image: $IMAGE_TAG"
-  #      echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
-  #    
-  #  - name: Run Trivy vulnerability scanner
-  #    uses: aquasecurity/trivy-action@master
-  #    with:
-  #      image-ref: 'registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest' #${{ needs.build-and-push.outputs.image-tag }}
-  #      format: 'sarif'
-  #      output: 'trivy-results.sarif'
+  security-scan:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    name: Security Scan
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Login to Harbor Registry
+      run: |
+        echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} \
+          -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+      
+    - name: Extract single image tag
+      id: extract-tag
+      run: |
+        # Extraire le premier tag de l'output du build (généralement celui avec 'latest')
+        FULL_TAGS="${{ needs.build-and-push.outputs.image-tag }}"
+        SINGLE_TAG=$(echo "$FULL_TAGS" | head -n1 | tr -d '\n\r')
+        echo "Selected image tag: $SINGLE_TAG"
+        echo "image-tag=$SINGLE_TAG" >> $GITHUB_OUTPUT
+      
+    - name: Pull image for scanning
+      run: |
+        docker pull ${{ steps.extract-tag.outputs.image-tag }}
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ steps.extract-tag.outputs.image-tag }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
         
-  #  - name: Upload Trivy scan results to GitHub Security tab
-  #    uses: github/codeql-action/upload-sarif@v3
-  #    if: always()
-  #    with:
-  #      sarif_file: 'trivy-results.sarif'
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+        category: 'trivy'
  
   deploy-staging:
-    needs: build-and-push #[build-and-push, security-scan]
+    needs: [build-and-push, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop'
     name: Deploy to Staging
