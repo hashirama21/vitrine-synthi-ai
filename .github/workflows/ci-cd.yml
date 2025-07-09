@@ -104,16 +104,41 @@ jobs:
       run: |
         echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_REGISTRY }} \
           -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+          
+    - name: Debug build outputs
+      run: |
+        echo "Build outputs received:"
+        echo "image-tag: '${{ needs.build-and-push.outputs.image-tag }}'"
+        echo "image-digest: '${{ needs.build-and-push.outputs.image-digest }}'"
+    
       
     - name: Extract single image tag
       id: extract-tag
       run: |
-        # Extraire le premier tag de l'output du build (généralement celui avec 'latest')
+        # Essayer différentes approches pour extraire un tag valide
         FULL_TAGS="${{ needs.build-and-push.outputs.image-tag }}"
-        echo "Full tags output: $FULL_TAGS"
-        SINGLE_TAG=$(echo "$FULL_TAGS" | head -n1 | tr -d '\n\r' | xargs)
-        echo "Selected image tag: $SINGLE_TAG"
-        echo "image-tag=$SINGLE_TAG" >> $GITHUB_OUTPUT
+        echo "Full tags output: '$FULL_TAGS'"
+        
+        if [ -n "$FULL_TAGS" ]; then
+          # Méthode 1: Prendre le premier tag
+          SINGLE_TAG=$(echo "$FULL_TAGS" | head -n1 | tr -d '\n\r' | xargs)
+          echo "Method 1 - First tag: '$SINGLE_TAG'"
+          
+          # Vérifier si le tag est valide
+          if [ -n "$SINGLE_TAG" ]; then
+            echo "image-tag=$SINGLE_TAG" >> $GITHUB_OUTPUT
+            echo "Using tag: $SINGLE_TAG"
+          else
+            echo "Failed to extract tag from output"
+            exit 1
+          fi
+        else
+          # Fallback: construire le tag manuellement
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          FALLBACK_TAG="${{ secrets.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.IMAGE_NAME }}:${BRANCH_NAME}"
+          echo "Using fallback tag: $FALLBACK_TAG"
+          echo "image-tag=$FALLBACK_TAG" >> $GITHUB_OUTPUT
+        fi
       
     - name: Pull image for scanning
       run: |
