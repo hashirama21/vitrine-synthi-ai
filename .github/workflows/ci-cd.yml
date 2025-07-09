@@ -96,6 +96,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Login to Harbor Registry
+      run: |
+       echo "${{ secrets.HARBOR_PASSWORD }}" | docker login registry.synthi-ai.org:8453 \
+        -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
       
     - name: Set image tag
       id: set-image
