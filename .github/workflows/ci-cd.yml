@@ -97,6 +97,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Set image tag
+      id: set-image
+      run: |
+        IMAGE_TAG="registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest"
+        echo "Scanning image: $IMAGE_TAG"
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+      
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
