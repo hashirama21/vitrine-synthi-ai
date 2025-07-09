@@ -88,34 +88,34 @@ jobs:
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
 
- # security-scan:
- #   needs: build-and-push
- #   runs-on: ubuntu-latest
- #   name: Security Scan
- #   
- #   steps:
- #   - name: Checkout code
- #     uses: actions/checkout@v4
- #     
- #   - name: Set image tag
- #     id: set-image
- #     run: |
- #       IMAGE_TAG="registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest"
- #       echo "Scanning image: $IMAGE_TAG"
- #       echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
- #     
- #   - name: Run Trivy vulnerability scanner
- #     uses: aquasecurity/trivy-action@master
- #     with:
- #       image-ref: 'registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest' #${{ needs.build-and-push.outputs.image-tag }}
- #       format: 'sarif'
- #       output: 'trivy-results.sarif'
- #       
- #   - name: Upload Trivy scan results to GitHub Security tab
- #     uses: github/codeql-action/upload-sarif@v3
- #     if: always()
- #     with:
- #       sarif_file: 'trivy-results.sarif'
+  security-scan:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    name: Security Scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set image tag
+      id: set-image
+      run: |
+        IMAGE_TAG="registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest"
+        echo "Scanning image: $IMAGE_TAG"
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'registry.synthi-ai.org:8453/synthi-ai/vitrine-synthi-ai:latest' #${{ needs.build-and-push.outputs.image-tag }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
  
   deploy-staging:
     needs: [build-and-push, security-scan]
