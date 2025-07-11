@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
+env: 
   HARBOR_PROJECT: synthi-ai
   IMAGE_NAME: vitrine-synthi-ai
   KUSTOMIZE_VERSION: v5.0.3
