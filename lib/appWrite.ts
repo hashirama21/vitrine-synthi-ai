@@ -5,15 +5,19 @@ import { Solution, Technology, UseCase, Objective, Author } from '../models/Solu
 const client = new Client();
 
 client
-    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1')
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '67ffb7180021bf8e2875');
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1')
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6882384d00032ba96226');
 
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 
+
+//NEXT_PUBLIC_APPWRITE_PROJECT_ID = "6882384d00032ba96226"
+//NEXT_PUBLIC_APPWRITE_ENDPOINT = "https://syd.cloud.appwrite.io/v1"
+        
 // IDs de la base de données et des collections
-export const DATABASE_ID = process.env.NEXT_PUBLIC_DATABASE_ID || '67ffb8bf00073a7eeaa4';
-export const COLLECTION_ID_SOLUTIONS = process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '67ffb953002223306e18';
+export const DATABASE_ID = process.env.NEXT_PUBLIC_DATABASE_ID || '68823942003cec72f927';
+export const COLLECTION_ID_SOLUTIONS = process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '6882399700312fffced9';
 export const COLLECTION_ID_TECHNOLOGIES = 'technologies';
 export const COLLECTION_ID_USE_CASES = 'use_cases';
 export const COLLECTION_ID_OBJECTIFS = 'objectifs';

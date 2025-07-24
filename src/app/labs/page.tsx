@@ -5,7 +5,7 @@ import AboutUsSection from "@/components/ia/AboutUsSection";
 import AssetsDisplaySection from "@/components/ia/AssetDisplaySection";
 import CallToActionSection from "@/components/ia/CallToActionSection";
 import CustomAssetsSection from "@/components/ia/CustomActionAsset";
-import FeaturesDisplaySection from "@/components/ia/FeatureDisplaySection";
+import FeaturesDisplaySection from "@/components/ia/TeamSection";
 import FeaturesOverviewSection from "@/components/ia/FeaturesOverviewSection";
 import NavigationMenuSection from "@/components/ia/NavogationMenuSection";
 import VisionStatementSection from "@/components/ia/VisionStatementSection";

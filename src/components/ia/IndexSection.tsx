@@ -7,7 +7,7 @@ import AboutUsSection from "./AboutUsSection";
 import AssetsDisplaySection from "./AssetDisplaySection";
 import CallToActionSection from "./CallToActionSection";
 import CustomAssetsSection from "./CustomActionAsset";
-import FeaturesDisplaySection from "./FeatureDisplaySection";
+import FeaturesDisplaySection from "./TeamSection";
 import FeaturesOverviewSection from "./FeaturesOverviewSection";
 import NavigationMenuSection from "./NavogationMenuSection";
 import VisionStatementSection from "./VisionStatementSection";
