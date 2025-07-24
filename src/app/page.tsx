@@ -1,9 +1,11 @@
 import BlogSection from '@/components/BlogSection';
+import ExpertiseDomainsSection from '@/components/DomainExpertise';
 import FAQSection from '@/components/Faq';
 import Features from '@/components/Features';
 import Hero from '@/components/Hero';
 import CustomAssetsSection from '@/components/ia/CustomActionAsset';
-import Testimonials from '@/components/Testimonials';
+import Services from '@/components/Services';
+import SolutionsShowcaseSection from '@/components/ShowCase';
 import TrustSection from '@/components/TrustSection';
 import React from 'react';
 
@@ -15,7 +17,9 @@ export default function Home() {
       <TrustSection/>
       <Features />
       <CustomAssetsSection /> 
-      <Testimonials/>
+      <Services />
+      <ExpertiseDomainsSection />
+      <SolutionsShowcaseSection />
       <BlogSection />
       <FAQSection/>
       {/*<Footer/> */}
