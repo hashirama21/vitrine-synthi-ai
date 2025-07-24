@@ -4,7 +4,12 @@ import { Inter } from 'next/font/google';
 import React from 'react';
 import Footer from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['system-ui', 'arial', 'sans-serif'],
+  variable: '--font-inter',
+})
 
 export const metadata = {
   title: 'Synthi AI - Empowering sectors with powerful AI',
