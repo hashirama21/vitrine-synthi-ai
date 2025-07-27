@@ -7,7 +7,8 @@ const nextConfig = {
         'cdn.sanity.io',
         'cdn.pixabay.com',
         'd2ds8yldqp7gxv.cloudfront.net', // Notez qu'il ne faut pas le "https://"
-        'encrypted-tbn0.gstatic.com' // Idem ici
+        'encrypted-tbn0.gstatic.com', // Idem ici
+        'fra.cloud.appwrite.io'
       ],
     },
   };
