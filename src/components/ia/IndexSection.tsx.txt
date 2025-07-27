@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import FAQSection from "../Faq";
 import AboutUsSection from "./AboutUsSection";
-import AssetsDisplaySection from "./AssetDisplaySection";
+import AssetsDisplaySection from "./ProfessionalSectionsComplete";
 import CallToActionSection from "./CallToActionSection";
 import CustomAssetsSection from "./CustomActionAsset";
 import FeaturesDisplaySection from "./TeamSection";

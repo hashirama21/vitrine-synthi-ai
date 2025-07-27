@@ -125,7 +125,7 @@ const pricingPlans = [
   },
   {
     id: 'neuralynx',
-    name: 'NeuraLynx Advisor',
+    name: 'NeuroLynx Advisor',
     tagline: 'Strategic AI & Data Consulting',
     description: 'Our specialized department providing strategic consulting in AI, data analytics, and digital transformation for enterprises.',
     icon: <BrainCircuit className="w-8 h-8" />,
@@ -449,7 +449,7 @@ export default function PricingSection() {
                   </div>
                   
                   <h3 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-                    NeuraLynx Advisor
+                    NeuroLynx Advisor
                   </h3>
                   
                   <p className="text-[#6b6b6b] text-lg leading-relaxed mb-6">

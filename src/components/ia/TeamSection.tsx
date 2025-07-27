@@ -47,27 +47,12 @@ const teamMembers = [
       email: "melvin.fokam@synthi-ai.com"
     }
   },
-  {
+   {
     id: 3,
-    slug: "sarah-chen",
-    name: "Sarah Chen",
-    role: "AI Research Lead",
-    image: "/founder/sarah.png",
-    bio: "PhD in Machine Learning with expertise in neural networks and computer vision applications.",
-    expertise: ["Machine Learning", "Computer Vision", "Research"],
-    social: {
-      linkedin: "#",
-      twitter: "#",
-      github: "#",
-      email: "sarah@synthi-ai.com"
-    }
-  },
-  {
-    id: 4,
     slug: "michael-johnson",
     name: "Michael Johnson",
     role: "Robotics Engineer",
-    image: "/founder/michael.png",
+    image: "/founder/woman.jpeg",
     bio: "Robotics specialist focused on autonomous systems and human-robot interaction design.",
     expertise: ["Robotics", "Automation", "IoT"],
     social: {
@@ -77,6 +62,21 @@ const teamMembers = [
       email: "michael@synthi-ai.com"
     }
   },
+  {
+    id: 4,
+    slug: "sarah-chen",
+    name: "Gaëlle Tamho",
+    role: "UI/UX designer",
+    image: "/founder/gael.jpeg",
+    bio: "Bsc in Software Engineering with expertise in UI/UX design and user-centered development.",
+    expertise: ["UX/UI Design", "Dev Frontend", "Web Development"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      email: "gael@synthi-ai.com"
+    }
+  }
 ];
 
 export default function TeamSection() {
