@@ -11,12 +11,14 @@ import {
     ArrowRight,
     Users,
     Target,
-    BarChart3
+    BarChart3,
+    Zap,
+    Activity,
+    Circle,
+    Hexagon
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { JSX } from "react/jsx-runtime";
-import { CardContent } from "./ui/card";
 
 type FloatingElement = {
     id: number;
@@ -25,19 +27,18 @@ type FloatingElement = {
     size: number;
     speed: number;
     opacity: number;
-    type: 'neural' | 'particle';
+    type: 'neural' | 'particle' | 'energy' | 'data';
+    angle: number;
+    pulse: number;
 };
 
-interface CardProps {
+interface HexModuleProps {
     children: React.ReactNode;
     className?: string;
+    style?: React.CSSProperties;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
-}
-
-interface CardContentProps {
-    children: React.ReactNode;
-    className?: string;
+    isActive?: boolean;
 }
 
 interface BadgeProps {
@@ -55,11 +56,12 @@ interface ButtonProps {
 export default function ExpertiseDomainsSection() {
     const sectionRef = useRef<HTMLDivElement>(null);
     const [isInView, setIsInView] = useState(false);
-    const [activeCard, setActiveCard] = useState<number | null>(null);
+    const [activeModule, setActiveModule] = useState<number | null>(null);
     const [neuralAnimation, setNeuralAnimation] = useState(0);
     const [floatingElements, setFloatingElements] = useState<FloatingElement[]>([]);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-    // Synthi AI's specialized AI expertise domains with real images
+    // Synthi AI's specialized AI expertise domains
     const expertiseDomains = [
         {
             id: 1,
@@ -71,9 +73,11 @@ export default function ExpertiseDomainsSection() {
             technologies: ["TensorFlow", "PyTorch", "Keras", "Scikit-learn", "CUDA", "OpenAI"],
             applications: ["Predictive models", "Neural networks", "Machine learning", "Generative AI", "Optimization"],
             color: "from-[#6b7db8] to-[#8a9fd9]",
-            bgPattern: "neural",
+            bgGlow: "shadow-[#6b7db8]/20",
+            accentColor: "#6b7db8",
             stats: { models: "47+", accuracy: "98.5%", datasets: "500TB" },
-            specialties: ["Deep Learning", "Neural Networks", "AutoML", "Transfer Learning"]
+            specialties: ["Deep Learning", "Neural Networks", "AutoML", "Transfer Learning"],
+            hexColor: "#6b7db8"
         },
         {
             id: 2,
@@ -85,9 +89,11 @@ export default function ExpertiseDomainsSection() {
             technologies: ["OpenCV", "YOLO", "MediaPipe", "Detectron2", "TensorRT", "ONNX"],
             applications: ["Object detection", "Facial recognition", "Intelligent OCR", "Medical imaging", "Smart surveillance"],
             color: "from-[#6b7db8] to-[#b3c0de]",
-            bgPattern: "vision",
+            bgGlow: "shadow-[#6b7db8]/20",
+            accentColor: "#6b7db8",
             stats: { fps: "120+", precision: "99.2%", objects: "1000+" },
-            specialties: ["Object Detection", "Image Segmentation", "Face Recognition", "Medical Imaging"]
+            specialties: ["Object Detection", "Image Segmentation", "Face Recognition", "Medical Imaging"],
+            hexColor: "#7c8dca"
         },
         {
             id: 3,
@@ -99,9 +105,11 @@ export default function ExpertiseDomainsSection() {
             technologies: ["ROS2", "Gazebo", "MoveIt", "Navigation2", "Arduino", "Raspberry Pi"],
             applications: ["Industrial robots", "Autonomous navigation", "Object manipulation", "Intelligent drones", "Collaborative robots"],
             color: "from-[#8a9fd9] to-[#6b7db8]",
-            bgPattern: "robotics",
+            bgGlow: "shadow-[#8a9fd9]/20",
+            accentColor: "#8a9fd9",
             stats: { robots: "35+", autonomy: "95%", industries: "15" },
-            specialties: ["Autonomous Navigation", "Robotic Manipulation", "SLAM", "Path Planning"]
+            specialties: ["Autonomous Navigation", "Robotic Manipulation", "SLAM", "Path Planning"],
+            hexColor: "#8a9fd9"
         },
         {
             id: 4,
@@ -113,9 +121,11 @@ export default function ExpertiseDomainsSection() {
             technologies: ["Transformers", "BERT", "GPT", "spaCy", "Hugging Face", "LangChain"],
             applications: ["AI chatbots", "Sentiment analysis", "Auto translation", "Text generation", "Entity extraction"],
             color: "from-[#b3c0de] to-[#6b7db8]",
-            bgPattern: "nlp",
+            bgGlow: "shadow-[#b3c0de]/20",
+            accentColor: "#b3c0de",
             stats: { languages: "25+", accuracy: "96.8%", queries: "1M+" },
-            specialties: ["Conversational AI", "Text Generation", "Sentiment Analysis", "Named Entity Recognition"]
+            specialties: ["Conversational AI", "Text Generation", "Sentiment Analysis", "Named Entity Recognition"],
+            hexColor: "#b3c0de"
         },
         {
             id: 5,
@@ -127,9 +137,11 @@ export default function ExpertiseDomainsSection() {
             technologies: ["Python", "FastAPI", "Docker", "Kubernetes", "MLflow", "Apache Kafka"],
             applications: ["MLOps pipelines", "AI APIs", "Edge computing", "Microservices", "AI monitoring"],
             color: "from-[#6b7db8] to-[#ebf1ff]",
-            bgPattern: "software",
+            bgGlow: "shadow-[#6b7db8]/20",
+            accentColor: "#6b7db8",
             stats: { apis: "200+", uptime: "99.9%", deployments: "5000+" },
-            specialties: ["MLOps", "AI APIs", "Edge Deployment", "Model Serving"]
+            specialties: ["MLOps", "AI APIs", "Edge Deployment", "Model Serving"],
+            hexColor: "#6b7db8"
         },
         {
             id: 6,
@@ -141,11 +153,36 @@ export default function ExpertiseDomainsSection() {
             technologies: ["Pandas", "NumPy", "Apache Spark", "Databricks", "Power BI", "Plotly"],
             applications: ["Business predictions", "Data mining", "AI visualization", "Real-time analytics", "Intelligent KPIs"],
             color: "from-[#8a9fd9] to-[#b3c0de]",
-            bgPattern: "analytics",
+            bgGlow: "shadow-[#8a9fd9]/20",
+            accentColor: "#8a9fd9",
             stats: { insights: "10K+", models: "150+", ROI: "340%" },
-            specialties: ["Predictive Analytics", "Real-time Processing", "Business Intelligence", "Data Mining"]
+            specialties: ["Predictive Analytics", "Real-time Processing", "Business Intelligence", "Data Mining"],
+            hexColor: "#9fb5e5"
         }
     ];
+
+    // Mouse tracking for interactive effects
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (sectionRef.current) {
+                const rect = sectionRef.current.getBoundingClientRect();
+                setMousePosition({
+                    x: ((e.clientX - rect.left) / rect.width) * 100,
+                    y: ((e.clientY - rect.top) / rect.height) * 100
+                });
+            }
+        };
+
+        if (sectionRef.current) {
+            sectionRef.current.addEventListener('mousemove', handleMouseMove);
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                sectionRef.current.removeEventListener('mousemove', handleMouseMove);
+            }
+        };
+    }, []);
 
     // Intersection Observer
     useEffect(() => {
@@ -165,19 +202,21 @@ export default function ExpertiseDomainsSection() {
         return () => observer.disconnect();
     }, []);
 
-    // Animation of floating elements and neural networks
+    // Advanced floating elements animation
     useEffect(() => {
         const generateFloatingElements = (): void => {
             const elements: FloatingElement[] = [];
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 50; i++) {
                 elements.push({
                     id: i,
                     x: Math.random() * 100,
                     y: Math.random() * 100,
-                    size: Math.random() * 6 + 2,
-                    speed: Math.random() * 1.5 + 0.5,
-                    opacity: Math.random() * 0.4 + 0.2,
-                    type: Math.random() > 0.7 ? 'neural' : 'particle'
+                    size: Math.random() * 12 + 3,
+                    speed: Math.random() * 3 + 0.2,
+                    opacity: Math.random() * 0.8 + 0.1,
+                    angle: Math.random() * Math.PI * 2,
+                    pulse: Math.random() * 2 + 1,
+                    type: Math.random() > 0.6 ? (Math.random() > 0.5 ? 'neural' : Math.random() > 0.5 ? 'energy' : 'data') : 'particle'
                 });
             }
             setFloatingElements(elements);
@@ -192,38 +231,34 @@ export default function ExpertiseDomainsSection() {
             setFloatingElements(prev =>
                 prev.map(el => ({
                     ...el,
-                    y: (el.y + el.speed * 0.08) % 100,
-                    x: el.x + Math.sin(time + el.id) * 0.05,
+                    y: (el.y + el.speed * 0.03) % 100,
+                    x: el.x + Math.sin(time * el.pulse + el.id + el.angle) * 0.02,
+                    angle: el.angle + 0.008,
                     opacity: el.type === 'neural'
-                        ? 0.2 + Math.sin(time * 2 + el.id) * 0.3 + 0.3
+                        ? 0.3 + Math.sin(time * 2 + el.id) * 0.4 + 0.3
+                        : el.type === 'energy'
+                        ? 0.2 + Math.sin(time * 3 + el.id * 0.7) * 0.3 + 0.4
+                        : el.type === 'data'
+                        ? 0.1 + Math.sin(time * 1.5 + el.id * 1.2) * 0.4 + 0.4
                         : el.opacity
                 }))
             );
         };
 
-        const interval = setInterval(animateElements, 60);
+        const interval = setInterval(animateElements, 40);
         return () => clearInterval(interval);
     }, []);
 
-
-
-    type CardProps = {
-        children: React.ReactNode;
-        className?: string;
-        style?: React.CSSProperties;
-        onMouseEnter?: () => void;
-        onMouseLeave?: () => void;
-    };
-
-    const Card: React.FC<CardProps> = ({
+    const HexModule: React.FC<HexModuleProps> = ({
         children,
         className,
         style,
         onMouseEnter,
         onMouseLeave,
+        isActive
     }) => (
         <div
-            className={className}
+            className={`${className} ${isActive ? 'hex-active' : ''}`}
             style={style}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -231,7 +266,6 @@ export default function ExpertiseDomainsSection() {
             {children}
         </div>
     );
-
 
     const Badge: React.FC<BadgeProps> = ({ children, className = "" }) => (
         <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${className}`}>
@@ -252,286 +286,571 @@ export default function ExpertiseDomainsSection() {
         );
     };
 
-    // AI-specialized background patterns
-    const renderBackgroundPattern = (pattern: string): JSX.Element | null => {
-        switch (pattern) {
-            case 'neural':
-                return (
-                    <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100">
-                        <defs>
-                            <pattern id="neural" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
-                                <circle cx="12.5" cy="12.5" r="1.5" fill="currentColor" opacity="0.6" />
-                                <circle cx="6" cy="8" r="1" fill="currentColor" opacity="0.4" />
-                                <circle cx="19" cy="7" r="1" fill="currentColor" opacity="0.4" />
-                                <circle cx="8" cy="18" r="1" fill="currentColor" opacity="0.4" />
-                                <circle cx="17" cy="19" r="1" fill="currentColor" opacity="0.4" />
-                                <path d="M6,8 L12.5,12.5 M19,7 L12.5,12.5 M12.5,12.5 L8,18 M12.5,12.5 L17,19"
-                                    stroke="currentColor" strokeWidth="0.3" opacity="0.3" />
-                            </pattern>
-                        </defs>
-                        <rect width="100" height="100" fill="url(#neural)" />
-                    </svg>
-                );
-            case 'vision':
-                return (
-                    <svg className="absolute inset-0 w-full h-full opacity-12" viewBox="0 0 100 100">
-                        <defs>
-                            <pattern id="vision" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <rect x="7" y="7" width="6" height="6" stroke="currentColor" strokeWidth="0.5" fill="none" opacity="0.4" />
-                                <circle cx="10" cy="10" r="1" fill="currentColor" opacity="0.6" />
-                                <path d="M4,10 Q10,6 16,10 Q10,14 4,10" stroke="currentColor" strokeWidth="0.3" fill="none" opacity="0.3" />
-                            </pattern>
-                        </defs>
-                        <rect width="100" height="100" fill="url(#vision)" />
-                    </svg>
-                );
-            case 'robotics':
-                return (
-                    <svg className="absolute inset-0 w-full h-full opacity-12" viewBox="0 0 100 100">
-                        <defs>
-                            <pattern id="robotics" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
-                                <rect x="5" y="5" width="5" height="5" stroke="currentColor" strokeWidth="0.4" fill="none" opacity="0.4" />
-                                <circle cx="3" cy="3" r="0.8" fill="currentColor" opacity="0.5" />
-                                <circle cx="12" cy="3" r="0.8" fill="currentColor" opacity="0.5" />
-                                <circle cx="7.5" cy="12" r="0.8" fill="currentColor" opacity="0.5" />
-                                <path d="M3,3 L5,5 M12,3 L10,5 M7.5,12 L7.5,10" stroke="currentColor" strokeWidth="0.3" opacity="0.4" />
-                            </pattern>
-                        </defs>
-                        <rect width="100" height="100" fill="url(#robotics)" />
-                    </svg>
-                );
-            case 'nlp':
-                return (
-                    <div className="absolute inset-0 opacity-8 text-current font-mono text-xs leading-relaxed overflow-hidden">
-                        <div className="p-4 space-y-1">
-                            <div>{"tokenize(\"Hello AI world\")"}</div>
-                            <div>{"[BERT] → embeddings"}</div>
-                            <div>{"attention_weights = softmax(Q·K^T)"}</div>
-                            <div>{"transformer.encode()"}</div>
-                            <div>{"sentiment: positive (0.94)"}</div>
-                            <div>{"entities: [ORG, PER, LOC]"}</div>
-                        </div>
-                    </div>
-                );
-            case 'software':
-                return (
-                    <div className="absolute inset-0 opacity-10 text-current font-mono text-xs leading-relaxed overflow-hidden">
-                        <pre className="p-4">
-                            {`@app.post("/predict")
-async def predict(data: InputData):
-    model = load_model("ai_model.pkl")
-    result = model.predict(data.features)
-    return {"prediction": result}
+    // Hexagonal holographic pattern
+    const renderHexagonalPattern = (domain: any, isActive: boolean): JSX.Element => {
+        return (
+            <div className="absolute inset-0 overflow-hidden">
+                {/* Hexagonal grid */}
+                <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100">
+                    <defs>
+                        <pattern id={`hexGrid-${domain.id}`} x="0" y="0" width="20" height="17.32" patternUnits="userSpaceOnUse">
+                            <polygon points="10,0 20,5.77 20,11.55 10,17.32 0,11.55 0,5.77" 
+                                     stroke={domain.hexColor} 
+                                     strokeWidth="0.3" 
+                                     fill="none" 
+                                     opacity={isActive ? "0.8" : "0.4"} />
+                        </pattern>
+                    </defs>
+                    <rect width="100" height="100" fill={`url(#hexGrid-${domain.id})`} />
+                </svg>
 
-# MLOps Pipeline
-mlflow.start_run()
-model.fit(X_train, y_train)
-mlflow.log_metric("accuracy", 0.98)`}
-                        </pre>
-                    </div>
-                );
-            case 'analytics':
-                return (
-                    <svg className="absolute inset-0 w-full h-full opacity-12" viewBox="0 0 100 100">
-                        <defs>
-                            <pattern id="analytics" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <rect x="3" y="12" width="2" height="6" fill="currentColor" opacity="0.4" />
-                                <rect x="6" y="10" width="2" height="8" fill="currentColor" opacity="0.5" />
-                                <rect x="9" y="8" width="2" height="10" fill="currentColor" opacity="0.6" />
-                                <rect x="12" y="6" width="2" height="12" fill="currentColor" opacity="0.7" />
-                                <rect x="15" y="4" width="2" height="14" fill="currentColor" opacity="0.8" />
-                                <path d="M4,12 L7,10 L10,8 L13,6 L16,4" stroke="currentColor" strokeWidth="0.5" fill="none" opacity="0.5" />
-                            </pattern>
-                        </defs>
-                        <rect width="100" height="100" fill="url(#analytics)" />
-                    </svg>
-                );
-            default:
-                return null;
-        }
+                {/* Data stream lines */}
+                <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 100 100">
+                    {isActive && (
+                        <>
+                            <line x1="0" y1="20" x2="100" y2="25" stroke={domain.hexColor} strokeWidth="0.5" opacity="0.7">
+                                <animate attributeName="stroke-dasharray" values="0,10;5,5;10,0" dur="2s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="0" y1="50" x2="100" y2="55" stroke={domain.hexColor} strokeWidth="0.3" opacity="0.5">
+                                <animate attributeName="stroke-dasharray" values="0,8;4,4;8,0" dur="3s" repeatCount="indefinite"/>
+                            </line>
+                            <line x1="0" y1="80" x2="100" y2="75" stroke={domain.hexColor} strokeWidth="0.4" opacity="0.6">
+                                <animate attributeName="stroke-dasharray" values="0,12;6,6;12,0" dur="2.5s" repeatCount="indefinite"/>
+                            </line>
+                        </>
+                    )}
+                </svg>
+            </div>
+        );
     };
 
     return (
         <section ref={sectionRef} className="relative py-20 lg:py-32 bg-black overflow-hidden">
-            {/* Background with AI floating elements */}
+            {/* Enhanced background with futuristic elements */}
             <div className="absolute inset-0">
+                {/* Dynamic holographic grid */}
+                <div className="absolute inset-0 opacity-5">
+                    <svg className="w-full h-full" viewBox="0 0 100 100">
+                        <defs>
+                            <pattern id="holoGrid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                                <rect width="10" height="10" stroke="#6b7db8" strokeWidth="0.1" fill="none" opacity="0.3"/>
+                                <circle cx="5" cy="5" r="0.5" fill="#8a9fd9" opacity="0.4"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100" height="100" fill="url(#holoGrid)" />
+                    </svg>
+                </div>
+
+                {/* Cursor-following holographic field */}
+                <div 
+                    className="absolute w-[500px] h-[500px] bg-gradient-radial from-[#6b7db8]/15 via-[#6b7db8]/5 to-transparent rounded-full blur-3xl transition-all duration-700 ease-out"
+                    style={{
+                        left: `${mousePosition.x}%`,
+                        top: `${mousePosition.y}%`,
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                />
+
+                {/* Enhanced floating elements */}
                 {floatingElements.map(el => (
                     <div
                         key={el.id}
-                        className={`absolute rounded-full transition-all duration-100 ${el.type === 'neural'
-                            ? 'bg-[#6b7db8]/40 animate-pulse'
-                            : 'bg-[#6b7db8]/20'
-                            }`}
+                        className={`absolute transition-all duration-300 ${
+                            el.type === 'neural'
+                                ? 'bg-gradient-to-br from-[#6b7db8]/70 to-[#8a9fd9]/50 rounded-full'
+                                : el.type === 'energy'
+                                ? 'bg-gradient-to-tr from-[#8a9fd9]/60 to-[#b3c0de]/40 rounded-lg rotate-45'
+                                : el.type === 'data'
+                                ? 'bg-gradient-to-br from-[#b3c0de]/50 to-[#ebf1ff]/30 rounded-sm rotate-12'
+                                : 'bg-[#6b7db8]/25 rounded-full'
+                        }`}
                         style={{
                             left: `${el.x}%`,
                             top: `${el.y}%`,
                             width: `${el.size}px`,
                             height: `${el.size}px`,
                             opacity: el.opacity,
-                            filter: el.type === 'neural' ? 'blur(1px)' : 'blur(0.5px)',
+                            filter: `blur(${el.type === 'neural' ? '2px' : el.type === 'energy' ? '1px' : el.type === 'data' ? '0.5px' : '1px'})`,
                             transform: el.type === 'neural'
-                                ? `scale(${1 + Math.sin(neuralAnimation + el.id) * 0.3})`
-                                : 'none'
+                                ? `scale(${1 + Math.sin(neuralAnimation * 2 + el.id) * 0.5}) rotate(${el.angle * 180 / Math.PI}deg)`
+                                : el.type === 'energy'
+                                ? `rotate(${el.angle * 180 / Math.PI + 45}deg) scale(${1 + Math.sin(neuralAnimation * 3 + el.id) * 0.3})`
+                                : el.type === 'data'
+                                ? `rotate(${el.angle * 180 / Math.PI + 12}deg) scaleX(${1 + Math.sin(neuralAnimation * 1.5 + el.id) * 0.2})`
+                                : `scale(${1 + Math.sin(neuralAnimation + el.id) * 0.1})`
                         }}
                     />
                 ))}
             </div>
 
-            {/* Neural network background animation */}
-            <div className="absolute inset-0 opacity-5">
+            {/* Holographic neural network */}
+            <div className="absolute inset-0 opacity-6">
                 <svg className="w-full h-full" viewBox="0 0 100 100">
-                    {[...Array(8)].map((_, i) => (
-                        <path
-                            key={i}
-                            d={`M${10 + i * 12},${20 + Math.sin(neuralAnimation + i) * 15} Q50,50 ${90 - i * 8},${80 + Math.cos(neuralAnimation + i) * 15}`}
-                            stroke="#6b7db8"
-                            strokeWidth="0.1"
-                            fill="none"
-                            opacity={0.3 + Math.sin(neuralAnimation * 2 + i) * 0.2}
-                        />
+                    {[...Array(15)].map((_, i) => (
+                        <g key={i}>
+                            <path
+                                d={`M${3 + i * 6.5},${10 + Math.sin(neuralAnimation + i * 0.3) * 8} 
+                                    Q${50 + Math.cos(neuralAnimation + i * 0.8) * 20},${50 + Math.sin(neuralAnimation * 1.2 + i) * 25} 
+                                    ${97 - i * 6.2},${90 + Math.cos(neuralAnimation + i * 0.6) * 10}`}
+                                stroke="#6b7db8"
+                                strokeWidth="0.1"
+                                fill="none"
+                                opacity={0.4 + Math.sin(neuralAnimation * 2.5 + i) * 0.3}
+                            />
+                            <circle
+                                cx={50 + Math.cos(neuralAnimation + i * 0.8) * 20}
+                                cy={50 + Math.sin(neuralAnimation * 1.2 + i) * 25}
+                                r="0.8"
+                                fill="#8a9fd9"
+                                opacity={0.7 + Math.sin(neuralAnimation * 4 + i) * 0.3}
+                            />
+                        </g>
                     ))}
                 </svg>
             </div>
 
-            {/* Background decorative elements */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-20 right-20 w-2 h-2 bg-[#6b7db8] rounded-full animate-pulse"></div>
-                <div className="absolute bottom-32 left-32 w-1.5 h-1.5 bg-[#6b7db8]/60 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute top-1/2 left-10 w-1 h-1 bg-[#6b7db8]/40 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-[#8a9fd9]/60 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+            {/* Geometric holographic elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-16 right-16 w-40 h-40 border border-[#6b7db8]/15 rotate-45 animate-spin-slow"></div>
+                <div className="absolute bottom-24 left-24 w-32 h-32 border-2 border-[#8a9fd9]/10 rotate-12 animate-pulse"></div>
+                <div className="absolute top-1/2 left-8 w-20 h-20 bg-gradient-to-br from-[#6b7db8]/8 to-transparent rotate-45 animate-bounce-slow"></div>
+                <div className="absolute top-1/4 right-1/4 w-28 h-28 border border-[#b3c0de]/20 rounded-full animate-ping-slow"></div>
+                
+                {/* Hexagonal decorations */}
+                <div className="absolute top-32 left-1/3 w-16 h-16 opacity-20">
+                    <svg viewBox="0 0 100 100" className="w-full h-full animate-pulse">
+                        <polygon points="50,5 90,30 90,70 50,95 10,70 10,30" stroke="#6b7db8" strokeWidth="2" fill="none"/>
+                    </svg>
+                </div>
+                <div className="absolute bottom-40 right-1/4 w-12 h-12 opacity-15">
+                    <svg viewBox="0 0 100 100" className="w-full h-full animate-pulse" style={{ animationDelay: '1s' }}>
+                        <polygon points="50,5 90,30 90,70 50,95 10,70 10,30" stroke="#8a9fd9" strokeWidth="2" fill="none"/>
+                    </svg>
+                </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-
-                {/* Header Section */}
-                <div className={`text-center mb-16 lg:mb-24 transition-all duration-1000 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}>
-                    <div className="inline-block mb-6">
-                        <Badge className="px-6 py-3 bg-[#6b7db8]/10 border border-[#6b7db8]/20 text-[#6b7db8] uppercase text-sm font-semibold tracking-widest rounded-full backdrop-blur-sm">
-                            <Sparkles className="w-4 h-4 mr-2 animate-pulse" />
+                {/* Enhanced Header Section */}
+                <div className={`text-center mb-20 lg:mb-28 transition-all duration-1500 ${
+                    isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'
+                }`}>
+                    <div className="inline-block mb-10 relative">
+                        <Badge className="px-10 py-5 bg-gradient-to-r from-[#6b7db8]/20 to-[#8a9fd9]/15 border-2 border-[#6b7db8]/40 text-[#6b7db8] uppercase text-base font-black tracking-[0.25em] rounded-3xl backdrop-blur-lg relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#6b7db8]/30 to-transparent animate-shimmer"></div>
+                            <Sparkles className="w-6 h-6 mr-4 animate-pulse" />
                             AI Excellence & Innovation
+                            <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#6b7db8] rounded-full animate-ping"></div>
+                            <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-[#8a9fd9] rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
                         </Badge>
                     </div>
 
-                    <h2 className="text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-8">
-                        <span className="bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent">
+                    <h2 className="text-6xl lg:text-8xl xl:text-9xl font-black leading-[0.85] mb-12 tracking-tighter">
+                        <span className="block bg-gradient-to-r from-[#ebf1ff] via-[#b3c0de] to-[#ebf1ff] bg-clip-text text-transparent animate-gradient-x bg-400%">
                             Our AI Expertise
                         </span>
-                        <br />
-                        <span className="bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] bg-clip-text text-transparent">
+                        <span className="block bg-gradient-to-r from-[#6b7db8] via-[#8a9fd9] to-[#6b7db8] bg-clip-text text-transparent animate-gradient-x bg-400% mt-4">
                             Domains
                         </span>
                     </h2>
 
-                    <p className="text-lg lg:text-xl text-[#6b6b6b] leading-relaxed max-w-3xl mx-auto">
+                    <p className="text-2xl lg:text-3xl text-[#6b6b6b] leading-relaxed max-w-5xl mx-auto font-light">
                         Synthi AI masters the most advanced artificial intelligence technologies to create
-                        innovative solutions that transform industries and shape Africa&apos;s digital future.
+                        <span className="text-[#6b7db8] font-semibold"> innovative solutions</span> that transform industries and shape 
+                        <span className="text-[#8a9fd9] font-semibold"> Africa&apos;s digital future</span>.
                     </p>
+
+                    {/* Enhanced animated separator */}
+                    <div className="flex justify-center mt-16">
+                        <div className="flex items-center space-x-6">
+                            <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#6b7db8] animate-pulse"></div>
+                            <Hexagon className="w-6 h-6 text-[#6b7db8] animate-spin-slow" />
+                            <div className="w-32 h-px bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9]"></div>
+                            <Circle className="w-4 h-4 text-[#8a9fd9] animate-pulse" style={{ animationDelay: '0.5s' }} />
+                            <div className="w-16 h-px bg-gradient-to-r from-[#8a9fd9] to-transparent animate-pulse"></div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Domains Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10 mb-16">
-                    {expertiseDomains.map((domain, index) => (
-                        <Card
-                            key={domain.id}
-                            className={`group relative bg-gradient-to-br from-gray-900/90 to-gray-800/70 border border-[#6b7db8]/20 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#6b7db8]/25 transition-all duration-700 hover:-translate-y-4 hover:scale-105 overflow-hidden cursor-pointer ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-                                }`}
-                            style={{ transitionDelay: `${index * 0.12}s` }}
-                            onMouseEnter={() => setActiveCard(domain.id)}
-                            onMouseLeave={() => setActiveCard(null)}
-                        >
-                            <CardContent className="relative p-0 h-full">
+                {/* Futuristic Hexagonal Modules Grid */}
+                <div className="relative mb-20">
+                    {/* Central connection hub */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 opacity-30 z-10">
+                        <svg viewBox="0 0 100 100" className="w-full h-full animate-pulse">
+                            <polygon points="50,5 90,30 90,70 50,95 10,70 10,30" stroke="#6b7db8" strokeWidth="1" fill="#6b7db8" fillOpacity="0.1"/>
+                            <circle cx="50" cy="50" r="8" fill="#8a9fd9" opacity="0.8" />
+                        </svg>
+                    </div>
 
-                                {/* Card Image */}
+                    {/* Hexagonal modules arrangement */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-12 lg:gap-16">
+                        {expertiseDomains.map((domain, index) => {
+                            const isActive = activeModule === domain.id;
+                            
+                            return (
+                                <HexModule
+                                    key={domain.id}
+                                    className={`group relative transition-all duration-800 hover:scale-105 cursor-pointer ${
+                                        isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+                                    }`}
+                                    style={{ 
+                                        transitionDelay: `${index * 0.2}s`
+                                    }}
+                                    onMouseEnter={() => setActiveModule(domain.id)}
+                                    onMouseLeave={() => setActiveModule(null)}
+                                    isActive={isActive}
+                                >
+                                    {/* Hexagonal container */}
+                                    <div className="relative">
+                                        {/* Main hexagonal module */}
+                                        <div className="relative w-full aspect-square max-w-md mx-auto">
+                                            {/* Hexagonal border */}
+                                            <svg 
+                                                viewBox="0 0 200 200" 
+                                                className="absolute inset-0 w-full h-full z-10"
+                                                style={{ filter: isActive ? `drop-shadow(0 0 20px ${domain.hexColor}40)` : 'none' }}
+                                            >
+                                                <defs>
+                                                    <linearGradient id={`hexGrad-${domain.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                                        <stop offset="0%" stopColor={domain.hexColor} stopOpacity="0.8"/>
+                                                        <stop offset="50%" stopColor={domain.hexColor} stopOpacity="0.6"/>
+                                                        <stop offset="100%" stopColor={domain.hexColor} stopOpacity="0.9"/>
+                                                    </linearGradient>
+                                                    <filter id={`glow-${domain.id}`}>
+                                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                                        <feMerge> 
+                                                            <feMergeNode in="coloredBlur"/>
+                                                            <feMergeNode in="SourceGraphic"/>
+                                                        </feMerge>
+                                                    </filter>
+                                                </defs>
+                                                
+                                                {/* Outer hexagonal glow */}
+                                                <polygon 
+                                                    points="100,20 160,60 160,140 100,180 40,140 40,60" 
+                                                    stroke={domain.hexColor}
+                                                    strokeWidth="0.5"
+                                                    fill="none"
+                                                    opacity="0.3"
+                                                    filter={`url(#glow-${domain.id})`}
+                                                    className={isActive ? 'animate-pulse' : ''}
+                                                />
+                                                
+                                                {/* Main hexagonal border */}
+                                                <polygon 
+                                                    points="100,25 155,57.5 155,137.5 100,175 45,137.5 45,57.5" 
+                                                    stroke={`url(#hexGrad-${domain.id})`}
+                                                    strokeWidth={isActive ? "2" : "1.5"}
+                                                    fill={domain.hexColor}
+                                                    fillOpacity={isActive ? "0.15" : "0.08"}
+                                                    className="transition-all duration-500"
+                                                />
+                                                
+                                                {/* Inner hexagonal detail */}
+                                                <polygon 
+                                                    points="100,35 145,62.5 145,132.5 100,165 55,132.5 55,62.5" 
+                                                    stroke={domain.hexColor}
+                                                    strokeWidth="0.5"
+                                                    fill="none"
+                                                    opacity={isActive ? "0.8" : "0.4"}
+                                                    className="transition-all duration-500"
+                                                />
+                                            </svg>
 
-                                <div className="relative w-full h-48 overflow-hidden rounded-t-3xl">
-                                    <Image
-                                        src={domain.image}
-                                        alt={domain.title}
-                                        fill
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                        sizes="(max-width: 1024px) 100vw, 33vw"
-                                        priority={index === 0} // Optionally prioritize the first image
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}></div>
+                                            {/* Background patterns */}
+                                            {renderHexagonalPattern(domain, isActive)}
 
-                                    {/* Icon overlay */}
-                                    <div className={`absolute top-4 right-4 w-12 h-12 rounded-2xl bg-gradient-to-br ${domain.color} p-3 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300`}>
-                                        <div className="text-white w-full h-full flex items-center justify-center">
-                                            {domain.icon}
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                {/* Card Content */}
-                                <div className="p-6 lg:p-8 relative">
-                                    {/* Background Pattern */}
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-5 group-hover:opacity-12 transition-opacity duration-500`}>
-                                        {renderBackgroundPattern(domain.bgPattern)}
-                                    </div>
-
-                                    {/* Header */}
-                                    <div className="relative z-10 mb-4">
-                                        <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent mb-2 group-hover:from-white group-hover:to-[#ebf1ff] transition-all duration-300">
-                                            {domain.title}
-                                        </h3>
-
-                                        <p className="text-[#6b7db8] text-sm font-medium mb-4 group-hover:text-[#8a9fd9] transition-colors duration-300">
-                                            {domain.subtitle}
-                                        </p>
-                                    </div>
-
-                                    {/* Description */}
-                                    <p className="text-[#6b6b6b] text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors duration-300 relative z-10">
-                                        {domain.description}
-                                    </p>
-
-                                    {/* Specialties */}
-                                    <div className="mb-6 relative z-10">
-                                        <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
-                                            <Target className="w-3 h-3 text-[#6b7db8]" />
-                                            Specialties
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {domain.specialties.map((specialty, specIndex) => (
-                                                <div key={specIndex} className="flex items-center gap-2 text-xs text-[#6b6b6b]">
-                                                    <div className="w-1 h-1 bg-[#6b7db8] rounded-full"></div>
-                                                    <span className="group-hover:text-gray-300 transition-colors duration-300">{specialty}</span>
+                                            {/* Content container */}
+                                            <div className="absolute inset-6 z-20 flex flex-col justify-center items-center text-center p-6">
+                                                {/* Icon section */}
+                                                <div className="mb-6 relative">
+                                                    <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${domain.color} p-5 backdrop-blur-sm transition-all duration-500 ${
+                                                        isActive ? 'scale-110 shadow-lg' : ''
+                                                    }`} style={{ boxShadow: isActive ? `0 0 30px ${domain.hexColor}40` : 'none' }}>
+                                                        <div className="text-white w-full h-full flex items-center justify-center">
+                                                            {domain.icon}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Orbital rings */}
+                                                    <div className={`absolute inset-0 rounded-full border border-[#6b7db8]/30 animate-spin-slow ${isActive ? 'opacity-60' : 'opacity-20'}`}></div>
+                                                    <div className={`absolute inset-2 rounded-full border border-[#8a9fd9]/20 animate-spin-slow ${isActive ? 'opacity-40' : 'opacity-10'}`} style={{ animationDirection: 'reverse', animationDuration: '30s' }}></div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
 
-                                    {/* Technologies */}
-                                    <div className="mb-6 relative z-10">
-                                        <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
-                                            <Cpu className="w-3 h-3 text-[#6b7db8]" />
-                                            Technologies
-                                        </h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {domain.technologies.slice(0, 4).map((tech, techIndex) => (
-                                                <Badge
-                                                    key={techIndex}
-                                                    className="px-2 py-1 bg-[#6b7db8]/20 text-[#6b7db8] border border-[#6b7db8]/30 text-xs rounded-lg hover:bg-[#6b7db8]/30 hover:scale-105 transition-all duration-200"
-                                                >
-                                                    {tech}
-                                                </Badge>
-                                            ))}
-                                            {domain.technologies.length > 4 && (
-                                                <Badge className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded-lg">
-                                                    +{domain.technologies.length - 4}
-                                                </Badge>
+                                                {/* Title */}
+                                                <h3 className={`text-lg lg:text-xl font-black bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent mb-2 transition-all duration-500 leading-tight ${
+                                                    isActive ? 'scale-105' : ''
+                                                }`}>
+                                                    {domain.title}
+                                                </h3>
+
+                                                {/* Subtitle with accent line */}
+                                                <div className="flex items-center justify-center mb-4">
+                                                    <div className={`w-8 h-px bg-gradient-to-r from-transparent to-[#6b7db8] mr-2 transition-all duration-500 ${
+                                                        isActive ? 'w-12' : ''
+                                                    }`}></div>
+                                                    <p className="text-[#6b7db8] text-xs font-bold uppercase tracking-wider">
+                                                        {domain.subtitle.split(' ').slice(0, 2).join(' ')}
+                                                    </p>
+                                                    <div className={`w-8 h-px bg-gradient-to-l from-transparent to-[#6b7db8] ml-2 transition-all duration-500 ${
+                                                        isActive ? 'w-12' : ''
+                                                    }`}></div>
+                                                </div>
+
+                                                {/* Stats in compact format */}
+                                                <div className="grid grid-cols-3 gap-2 mb-4 w-full">
+                                                    {Object.entries(domain.stats).map(([key, value], statIndex) => (
+                                                        <div key={statIndex} className="text-center">
+                                                            <div className={`text-sm font-black bg-gradient-to-r ${domain.color} bg-clip-text text-transparent transition-transform duration-300 ${
+                                                                isActive ? 'scale-110' : ''
+                                                            }`}>
+                                                                {value}
+                                                            </div>
+                                                            <div className="text-[8px] text-[#6b6b6b] uppercase tracking-wider font-medium">
+                                                                {key}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Tech tags */}
+                                                <div className="flex flex-wrap justify-center gap-1 mb-4">
+                                                    {domain.technologies.slice(0, 3).map((tech, techIndex) => (
+                                                        <Badge
+                                                            key={techIndex}
+                                                            className="px-2 py-1 bg-gradient-to-r from-[#6b7db8]/25 to-[#8a9fd9]/15 text-[#6b7db8] border border-[#6b7db8]/40 text-[10px] rounded-lg font-bold backdrop-blur-sm transition-all duration-300 hover:scale-105"
+                                                        >
+                                                            {tech}
+                                                        </Badge>
+                                                    ))}
+                                                    {domain.technologies.length > 3 && (
+                                                        <Badge className="px-2 py-1 bg-gradient-to-r from-gray-700/40 to-gray-600/20 text-gray-300 text-[10px] rounded-lg border border-gray-600/30 font-bold">
+                                                            +{domain.technologies.length - 3}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+
+                                                {/* Action indicator */}
+                                                <div className={`transition-all duration-500 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+                                                    <ArrowRight className="w-4 h-4 text-[#6b7db8] animate-pulse" />
+                                                </div>
+                                            </div>
+
+                                            {/* Data flow lines for active state */}
+                                            {isActive && (
+                                                <div className="absolute inset-0 z-15 pointer-events-none">
+                                                    <svg viewBox="0 0 200 200" className="w-full h-full">
+                                                        <path 
+                                                            d="M50,100 Q100,50 150,100" 
+                                                            stroke={domain.hexColor} 
+                                                            strokeWidth="1" 
+                                                            fill="none" 
+                                                            opacity="0.6"
+                                                            strokeDasharray="5,5"
+                                                        >
+                                                            <animate attributeName="stroke-dashoffset" values="0;-10" dur="1s" repeatCount="indefinite"/>
+                                                        </path>
+                                                        <path 
+                                                            d="M50,100 Q100,150 150,100" 
+                                                            stroke={domain.hexColor} 
+                                                            strokeWidth="1" 
+                                                            fill="none" 
+                                                            opacity="0.4"
+                                                            strokeDasharray="3,7"
+                                                        >
+                                                            <animate attributeName="stroke-dashoffset" values="0;10" dur="1.5s" repeatCount="indefinite"/>
+                                                        </path>
+                                                    </svg>
+                                                </div>
                                             )}
                                         </div>
+
+                                        {/* Detailed info panel that appears on hover */}
+                                        <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-6 w-80 bg-gradient-to-br from-gray-900/95 to-gray-800/90 border border-[#6b7db8]/30 rounded-2xl p-6 backdrop-blur-xl shadow-2xl transition-all duration-700 z-30 ${
+                                            isActive ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+                                        }`} style={{ 
+                                            boxShadow: isActive ? `0 20px 40px -12px ${domain.hexColor}30` : 'none'
+                                        }}>
+                                            {/* Panel background pattern */}
+                                            <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                                <div className={`absolute inset-0 bg-gradient-to-br ${domain.color} opacity-5`}></div>
+                                                {renderHexagonalPattern(domain, true)}
+                                            </div>
+
+                                            <div className="relative z-10">
+                                                {/* Description */}
+                                                <p className="text-[#6b6b6b] text-sm leading-relaxed mb-6 font-light">
+                                                    {domain.description}
+                                                </p>
+
+                                                {/* Specialties */}
+                                                <div className="mb-6">
+                                                    <h4 className="text-white text-xs font-black uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                        <Target className="w-3 h-3 text-[#6b7db8]" />
+                                                        Core Specialties
+                                                    </h4>
+                                                    <div className="grid grid-cols-2 gap-2">
+                                                        {domain.specialties.map((specialty, specIndex) => (
+                                                            <div key={specIndex} className="flex items-center gap-2 text-xs text-[#6b6b6b]">
+                                                                <div className={`w-1.5 h-1.5 bg-gradient-to-r ${domain.color} rounded-full`}></div>
+                                                                <span className="font-medium">{specialty}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {/* All Technologies */}
+                                                <div className="mb-6">
+                                                    <h4 className="text-white text-xs font-black uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                        <Cpu className="w-3 h-3 text-[#6b7db8]" />
+                                                        Full Tech Stack
+                                                    </h4>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {domain.technologies.map((tech, techIndex) => (
+                                                            <Badge
+                                                                key={techIndex}
+                                                                className="px-2 py-1 bg-gradient-to-r from-[#6b7db8]/20 to-[#8a9fd9]/10 text-[#6b7db8] border border-[#6b7db8]/30 text-xs rounded-lg hover:scale-105 transition-all duration-200 font-semibold"
+                                                            >
+                                                                {tech}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {/* Applications */}
+                                                <div className="mb-6">
+                                                    <h4 className="text-white text-xs font-black uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                        <Activity className="w-3 h-3 text-[#6b7db8]" />
+                                                        Applications
+                                                    </h4>
+                                                    <div className="grid grid-cols-1 gap-1">
+                                                        {domain.applications.map((app, appIndex) => (
+                                                            <div key={appIndex} className="flex items-center gap-2 text-xs text-[#6b6b6b]">
+                                                                <div className="w-1 h-1 bg-[#8a9fd9] rounded-full"></div>
+                                                                <span className="font-medium">{app}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {/* Explore button */}
+                                                <Button 
+                                                    variant="outline" 
+                                                    className="w-full py-3 text-sm font-bold group/btn relative overflow-hidden"
+                                                >
+                                                    <div className={`absolute inset-0 bg-gradient-to-r ${domain.color} opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300`}></div>
+                                                    <span className="relative z-10 flex items-center justify-center gap-2 group-hover/btn:text-white transition-colors duration-300">
+                                                        Explore {domain.title}
+                                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                                                    </span>
+                                                </Button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                </HexModule>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Enhanced Call to Action Section */}
+                <div className={`text-center transition-all duration-1200 ${
+                    isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`} style={{ transitionDelay: '1s' }}>
+                    <div className="relative inline-block mb-8">
+                        <Button className="px-16 py-8 text-xl font-black group/cta relative overflow-hidden rounded-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#6b7db8] via-[#8a9fd9] to-[#b3c0de] opacity-0 group-hover/cta:opacity-100 transition-opacity duration-500"></div>
+                            <span className="relative z-10 flex items-center gap-4">
+                                <Users className="w-8 h-8 group-hover/cta:rotate-12 transition-transform duration-300" />
+                                Discuss Your AI Project
+                                <Zap className="w-8 h-8 group-hover/cta:scale-110 transition-transform duration-300" />
+                            </span>
+                        </Button>
+                        
+                        {/* Enhanced decorative elements */}
+                        <div className="absolute -top-3 -left-3 w-6 h-6 border-l-2 border-t-2 border-[#6b7db8]/60 animate-pulse"></div>
+                        <div className="absolute -bottom-3 -right-3 w-6 h-6 border-r-2 border-b-2 border-[#8a9fd9]/60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#6b7db8] rounded-full animate-ping"></div>
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-[#8a9fd9] rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+                    </div>
+
+                    <p className="text-[#6b6b6b] text-xl leading-relaxed">
+                        Ready to transform your business with cutting-edge AI?
+                        <br />
+                        <span className="text-[#6b7db8] font-bold">Let&apos;s build the future together.</span>
+                    </p>
+
+                    {/* Final decorative separator */}
+                    <div className="flex justify-center mt-12">
+                        <div className="flex items-center space-x-4">
+                            <div className="w-20 h-px bg-gradient-to-r from-transparent to-[#6b7db8]"></div>
+                            <Hexagon className="w-4 h-4 text-[#6b7db8] animate-pulse" />
+                            <div className="w-40 h-px bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9]"></div>
+                            <Circle className="w-3 h-3 text-[#8a9fd9] animate-pulse" style={{ animationDelay: '0.5s' }} />
+                            <div className="w-20 h-px bg-gradient-to-r from-[#8a9fd9] to-transparent"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {/* Enhanced CSS animations */}
+            <style jsx>{`
+                @keyframes gradient-x {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+                
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+                
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                
+                @keyframes bounce-slow {
+                    0%, 100% { transform: translateY(0px) rotate(45deg); }
+                    50% { transform: translateY(-12px) rotate(45deg); }
+                }
+                
+                @keyframes ping-slow {
+                    0% { transform: scale(1); opacity: 1; }
+                    75%, 100% { transform: scale(2.5); opacity: 0; }
+                }
+                
+                .animate-gradient-x {
+                    animation: gradient-x 10s ease infinite;
+                }
+                
+                .animate-shimmer {
+                    animation: shimmer 2.5s linear infinite;
+                }
+                
+                .animate-spin-slow {
+                    animation: spin-slow 25s linear infinite;
+                }
+                
+                .animate-bounce-slow {
+                    animation: bounce-slow 5s ease-in-out infinite;
+                }
+                
+                .animate-ping-slow {
+                    animation: ping-slow 4s cubic-bezier(0, 0, 0.2, 1) infinite;
+                }
+                
+                .bg-400% {
+                    background-size: 400% 400%;
+                }
+                
+                .hex-active {
+                    transform: scale(1.05);
+                }
+                
+                .bg-gradient-radial {
+                    background: radial-gradient(circle, var(--tw-gradient-stops));
+                }
+            `}</style>
         </section>
     );
 }

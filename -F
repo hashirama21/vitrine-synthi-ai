@@ -1,0 +1,21 @@
+{"timestamp":"2025-04-22T10:05:15.850+00:00","status":415,"error":"Unsupported Media Type","path":"/api/v1/compte-request/save"}--_curl_--requeteCreationCompteDtoIn=
+>     "nom": "ada"
+--_curl_--requeteCreationCompteDtoIn=
+>     "prenom": "ada"
+--_curl_--requeteCreationCompteDtoIn=
+>     "email": "ada"
+--_curl_--requeteCreationCompteDtoIn=
+>     "numeroTelephone": "ada"
+--_curl_--requeteCreationCompteDtoIn=
+>     "dateNaissance": "2000-04-22"
+--_curl_--requeteCreationCompteDtoIn=
+>     "numeroIdentificationUnique": "ada"
+--_curl_--requeteCreationCompteDtoIn=
+>     "type": "AGENT"
+--_curl_--requeteCreationCompteDtoIn=
+>     "mot2passe": "ada123456789"
+--_curl_--requeteCreationCompteDtoIn=
+>     "longitude": "3.24"
+--_curl_--requeteCreationCompteDtoIn=
+>     "latitude": "11.7"
+>   

@@ -2,7 +2,7 @@
 
 import FAQSection from "@/components/Faq";
 import AboutUsSection from "@/components/ia/AboutUsSection";
-import AssetsDisplaySection from "@/components/ia/AssetDisplaySection";
+import AssetsDisplaySection from "@/components/ia/ProfessionalSectionsComplete";
 import CallToActionSection from "@/components/ia/CallToActionSection";
 import CustomAssetsSection from "@/components/ia/CustomActionAsset";
 import FeaturesDisplaySection from "@/components/ia/TeamSection";
