@@ -44,7 +44,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen sm:min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden px-4 md:px-8 py-16">
+    <section className="relative min-h-screen sm:min-h-[94vh] flex flex-col items-center justify-center text-center overflow-hidden px-4 md:px-8 py-16">
       {/* Background animation */}
       <div className="absolute inset-0 z-0">
         <ParticleNetwork />

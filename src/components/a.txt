@@ -13,13 +13,13 @@ const CONFIG = {
   DATABASE_ID: process.env.NEXT_PUBLIC_DATABASE_ID || '68823942003cec72f927',
   STORAGE_BUCKET_ID: process.env.NEXT_PUBLIC_STORAGE_BUCKET_ID || 'default',
   
-   // Collections IDs
+  // Collections IDs
   COLLECTIONS: {
-    SOLUTIONS: process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '6895f48b00104b1c6afe',
-    TECHNOLOGIES: process.env.NEXT_PUBLIC_COLLECTION_ID_TECHNOLOGIES || '6895f4c800177aedc217',
-    USE_CASES: process.env.NEXT_PUBLIC_COLLECTION_ID_USE_CASES || '6895f4e4003014f7a29d',
-    OBJECTIVES: process.env.NEXT_PUBLIC_COLLECTION_ID_OBJECTIVES || '6895f509001027c30af4',
-    AUTHORS: process.env.NEXT_PUBLIC_COLLECTION_ID_AUTHORS || '6895f5220037445d3b8b',
+    SOLUTIONS: process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '6882399700312fffced9',
+    TECHNOLOGIES: process.env.NEXT_PUBLIC_COLLECTION_ID_TECHNOLOGIES || 'technologies',
+    USE_CASES: process.env.NEXT_PUBLIC_COLLECTION_ID_USE_CASES || 'use_cases',
+    OBJECTIVES: process.env.NEXT_PUBLIC_COLLECTION_ID_OBJECTIVES || 'objectifs',
+    AUTHORS: process.env.NEXT_PUBLIC_COLLECTION_ID_AUTHORS || 'auteurs',
   },
 
   // Cache et pagination
@@ -337,7 +337,8 @@ async function transformDocumentToSolution(doc: any): Promise<Solution> {
       videos_demo: doc.videos_demo || [],
       technologies_utilisees: technologies,
       icon: iconUrl,
-      categorie: (doc.categorie as SolutionCategory) || 'Autres',
+     // categorie: (doc.categorie as SolutionCategory) || 'Autres',
+      categorie: (doc.categorie && SolutionCategory[doc.categorie as keyof typeof SolutionCategory]) || SolutionCategory.Autres,
       fonctionnalites: doc.fonctionnalites || [],
       objectifs: objectives,
       use_cases: useCases,
