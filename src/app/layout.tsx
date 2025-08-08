@@ -6,7 +6,12 @@ import Navbar from '@/components/Navbar';
 import type { Metadata, } from 'next';
 import { Viewport } from 'next/dist/lib/metadata/types/extra-types';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['system-ui', 'arial', 'sans-serif'],
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://synthi-ai.com'),
