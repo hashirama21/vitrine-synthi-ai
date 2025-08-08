@@ -1,25 +1,96 @@
 import { notFound } from 'next/navigation';
-import SolutionPage from '@/components/SolutionPage';
-import { getSolutionBySlug, getSolutions } from '../../../../lib/appWrite';
+import { Metadata } from 'next';
+import { getSolutions, getSolutionBySlug } from '../../../../lib/appWrite';
+import FuturisticSolutionDetail from '@/components/solutions/FuturisticSolutionDetail';
 
-// Generate static params for all solutions
 export async function generateStaticParams() {
-    const solutions = await getSolutions();
+  try {
+    const { solutions } = await getSolutions({ 
+      status: ['active'],
+      useCache: false,
+      pageSize: 100 
+    });
     
     return solutions.map((solution) => ({
-        slug: solution.slug,
+      slug: solution.slug,
     }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
-// Revalidate every hour
-export const revalidate = 3600;
-
-export default async function SolutionDetailPage({ params }: { params: { slug: string } }) {
-    const solution = await getSolutionBySlug(params.slug);
-
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { slug: string } 
+}): Promise<Metadata> {
+  try {
+    const solution = await getSolutionBySlug(params.slug, { useCache: false });
+    
     if (!solution) {
-        notFound();
+      return {
+        title: 'Solution Not Found',
+        description: 'This solution does not exist or has been removed.'
+      };
     }
 
-    return <SolutionPage solution={solution} />;
+    return {
+      title: `${solution.titre} | Technological Solutions`,
+      description: solution.description_courte,
+      keywords: solution.tags.join(', '),
+      openGraph: {
+        title: solution.titre,
+        description: solution.description_courte,
+        images: solution.images.length > 0 ? [solution.images[0]] : undefined,
+        type: 'article',
+      },
+    };
+  } catch (error) {
+    return {
+      title: 'Error | Technological Solutions',
+      description: 'An error occurred while loading this solution.'
+    };
+  }
+}
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+interface SolutionDetailPageProps {
+  params: { slug: string };
+}
+
+export default async function SolutionDetailPage({ params }: SolutionDetailPageProps) {
+  if (!params?.slug || typeof params.slug !== 'string') {
+    notFound();
+  }
+
+  try {
+    const solution = await getSolutionBySlug(params.slug, { useCache: true });
+
+    if (!solution) {
+      notFound();
+    }
+
+    const { solutions: allSolutions } = await getSolutions({ 
+      category: solution.categorie,
+      pageSize: 4,
+      useCache: true 
+    });
+    
+    const relatedSolutions = allSolutions
+      .filter(s => s.id !== solution.id)
+      .slice(0, 3);
+
+    return (
+      <FuturisticSolutionDetail 
+        solution={solution} 
+        relatedSolutions={relatedSolutions}
+      />
+    );
+  } catch (error) {
+    console.error('Error loading solution:', error);
+    notFound();
+  }
 }

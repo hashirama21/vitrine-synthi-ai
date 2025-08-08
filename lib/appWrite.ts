@@ -1,236 +1,607 @@
-import { Client, Databases, ImageGravity, Query, Storage } from 'appwrite';
+import { Client, Databases, ImageGravity, Query, Storage, ID } from 'appwrite';
 import { Solution, Technology, UseCase, Objective, Author } from '../models/Solution';
 
-// Initialiser le client Appwrite
-const client = new Client();
+// Types dérivés du modèle Solution
+type SolutionStatus = 'active' | 'draft' | 'archived';
+type SolutionCategory = 'Robotique' | 'IA' | 'Automatisation' | 'Autres';
+type TechnologyType = 'framework' | 'librairie' | 'langage';
 
-client
-    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1')
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6882384d00032ba96226');
+// Configuration des constantes
+const CONFIG = {
+  APPWRITE_ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://syd.cloud.appwrite.io/v1',
+  APPWRITE_PROJECT_ID: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '6882384d00032ba96226',
+  DATABASE_ID: process.env.NEXT_PUBLIC_DATABASE_ID || '68823942003cec72f927',
+  STORAGE_BUCKET_ID: process.env.NEXT_PUBLIC_STORAGE_BUCKET_ID || 'default',
+  
+  // Collections IDs
+  COLLECTIONS: {
+    SOLUTIONS: process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '6882399700312fffced9',
+    TECHNOLOGIES: process.env.NEXT_PUBLIC_COLLECTION_ID_TECHNOLOGIES || 'technologies',
+    USE_CASES: process.env.NEXT_PUBLIC_COLLECTION_ID_USE_CASES || 'use_cases',
+    OBJECTIVES: process.env.NEXT_PUBLIC_COLLECTION_ID_OBJECTIVES || 'objectifs',
+    AUTHORS: process.env.NEXT_PUBLIC_COLLECTION_ID_AUTHORS || 'auteurs',
+  },
 
+  // Cache et pagination
+  CACHE_TTL: 5 * 60 * 1000, // 5 minutes
+  DEFAULT_PAGE_SIZE: 25,
+  MAX_PAGE_SIZE: 100,
+  IMAGE_DIMENSIONS: {
+    WIDTH: 2000,
+    HEIGHT: 2000,
+    QUALITY: 85,
+  }
+} as const;
+
+// Types pour la gestion des erreurs
+interface AppwriteError extends Error {
+  code?: number;
+  type?: string;
+}
+
+// Cache simple en mémoire
+class SimpleCache<T> {
+  private cache = new Map<string, { data: T; timestamp: number }>();
+
+  set(key: string, data: T): void {
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  get(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    
+    if (Date.now() - entry.timestamp > CONFIG.CACHE_TTL) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return entry.data;
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+// Initialisation du client Appwrite avec validation
+function initializeAppwriteClient(): Client {
+  if (!CONFIG.APPWRITE_ENDPOINT || !CONFIG.APPWRITE_PROJECT_ID) {
+    throw new Error('Configuration Appwrite manquante. Vérifiez vos variables d\'environnement.');
+  }
+
+  const client = new Client();
+  
+  return client
+    .setEndpoint(CONFIG.APPWRITE_ENDPOINT)
+    .setProject(CONFIG.APPWRITE_PROJECT_ID);
+}
+
+// Clients Appwrite
+const client = initializeAppwriteClient();
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 
-
-//NEXT_PUBLIC_APPWRITE_PROJECT_ID = "6882384d00032ba96226"
-//NEXT_PUBLIC_APPWRITE_ENDPOINT = "https://syd.cloud.appwrite.io/v1"
-        
-// IDs de la base de données et des collections
-export const DATABASE_ID = process.env.NEXT_PUBLIC_DATABASE_ID || '68823942003cec72f927';
-export const COLLECTION_ID_SOLUTIONS = process.env.NEXT_PUBLIC_COLLECTION_ID_SOLUTIONS || '6882399700312fffced9';
-export const COLLECTION_ID_TECHNOLOGIES = 'technologies';
-export const COLLECTION_ID_USE_CASES = 'use_cases';
-export const COLLECTION_ID_OBJECTIFS = 'objectifs';
-export const COLLECTION_ID_AUTEURS = 'auteurs';
+// Cache instances
+const solutionsCache = new SimpleCache<Solution[]>();
+const solutionCache = new SimpleCache<Solution>();
 
 /**
- * Récupère l'URL d'un fichier depuis Appwrite Storage
+ * Gestion centralisée des erreurs Appwrite
  */
-export const getFilePreview = (fileId: string) => {
-    if (!fileId) return '';
-    try {
-        return storage.getFilePreview(
-            'default', 
-            fileId,
-            2000,
-            2000, 
-            ImageGravity.Center, 
-            100, 
-        ).toString();
-    } catch (error) {
-        console.error('Erreur lors de la récupération du fichier:', error);
-        return '';
+function handleAppwriteError(error: unknown, context: string): never {
+  console.error(`[Appwrite Error - ${context}]:`, error);
+  
+  if (error && typeof error === 'object' && 'code' in error) {
+    const appwriteError = error as AppwriteError;
+    switch (appwriteError.code) {
+      case 404:
+        throw new Error(`Ressource non trouvée dans ${context}`);
+      case 401:
+        throw new Error(`Accès non autorisé pour ${context}`);
+      case 429:
+        throw new Error(`Limite de taux atteinte pour ${context}`);
+      default:
+        throw new Error(`Erreur Appwrite dans ${context}: ${appwriteError.message || 'Erreur inconnue'}`);
     }
+  }
+  
+  throw new Error(`Erreur inattendue dans ${context}`);
+}
+
+/**
+ * Récupère l'URL optimisée d'un fichier depuis Appwrite Storage
+ */
+export const getFilePreview = (fileId: string, options?: {
+  width?: number;
+  height?: number;
+  quality?: number;
+  gravity?: ImageGravity;
+}): string => {
+  if (!fileId || typeof fileId !== 'string') {
+    console.warn('ID de fichier invalide fourni à getFilePreview');
+    return '';
+  }
+
+  try {
+    const {
+      width = CONFIG.IMAGE_DIMENSIONS.WIDTH,
+      height = CONFIG.IMAGE_DIMENSIONS.HEIGHT,
+      quality = CONFIG.IMAGE_DIMENSIONS.QUALITY,
+      gravity = ImageGravity.Center
+    } = options || {};
+
+    return storage.getFilePreview(
+      CONFIG.STORAGE_BUCKET_ID,
+      fileId,
+      width,
+      height,
+      gravity,
+      quality
+    ).toString();
+  } catch (error) {
+    console.error('Erreur lors de la récupération du fichier:', error);
+    return '';
+  }
 };
 
-
 /**
- * Récupère toutes les solutions actives
+ * Traite les URLs d'images de manière optimisée
  */
-export async function getSolutions(): Promise<Solution[]> {
-    try {
-        const response = await databases.listDocuments(
-            DATABASE_ID,
-            COLLECTION_ID_SOLUTIONS,
-            [Query.equal('statut', ['active'])]
-        );
-        
-        return Promise.all(response.documents.map(async doc => {
-            // Traitement des images pour obtenir les URLs
-            const imageUrls = doc.images ? 
-                await Promise.all(doc.images.map((imageId: string) => getFilePreview(imageId))) : 
-                [];
-            
-            // Traitement de l'icône
-            const iconUrl = doc.icon ? getFilePreview(doc.icon) : undefined;
+async function processImageUrls(imageIds: string[]): Promise<string[]> {
+  if (!Array.isArray(imageIds) || imageIds.length === 0) {
+    return [];
+  }
 
-            // Construction des tags basés sur la catégorie et d'autres attributs
-            const tags = [doc.categorie];
-            if (doc.technologies_utilisees && doc.technologies_utilisees.length > 0) {
-                // Supposons que technologies_utilisees soit un tableau d'IDs
-                // Dans une implémentation réelle, vous pourriez vouloir récupérer les noms des technologies
-                tags.push(...doc.technologies_utilisees.slice(0, 2)); // Limiter à 2 technologies pour les tags
-            }
-
-            return {
-                id: doc.$id,
-                slug: doc.slug,
-                titre: doc.titre,
-                description_courte: doc.description_courte,
-                description_longue: doc.description_longue,
-                images: imageUrls,
-                videos_demo: doc.videos_demo || [],
-                technologies_utilisees: doc.technologies_utilisees || [],
-                icon: iconUrl,
-                categorie: doc.categorie,
-                fonctionnalites: doc.fonctionnalites || [],
-                objectifs: doc.objectifs || [],
-                use_cases: doc.use_cases || [],
-                liens_externes: doc.liens_externes || [],
-                auteur: doc.auteur,
-                date_de_creation: new Date(doc.date_de_creation),
-                statut: doc.statut,
-                tags: tags
-            } as Solution;
-        }));
-    } catch (error) {
-        console.error('Erreur lors de la récupération des solutions:', error);
-        return [];
-    }
+  return Promise.all(
+    imageIds
+      .filter(id => id && typeof id === 'string')
+      .map(imageId => getFilePreview(imageId))
+  );
 }
 
 /**
- * Récupère une solution par son slug
+ * Récupère les technologies associées de manière optimisée
  */
-export async function getSolutionBySlug(slug: string): Promise<Solution | null> {
-    try {
-        const response = await databases.listDocuments(
-            DATABASE_ID,
-            COLLECTION_ID_SOLUTIONS,
-            [Query.equal('slug', slug), Query.equal('statut', ['active'])]
-        );
-        
-        if (response.documents.length === 0) {
-            return null;
-        }
+async function getTechnologies(technologyIds: string[]): Promise<Technology[]> {
+  if (!Array.isArray(technologyIds) || technologyIds.length === 0) {
+    return [];
+  }
 
-        const doc = response.documents[0];
-        
-        // Traitement des images pour obtenir les URLs
-        const imageUrls = doc.images ? 
-            await Promise.all(doc.images.map((imageId: string) => getFilePreview(imageId))) : 
-            [];
-        
-        // Traitement de l'icône
-        const iconUrl = doc.icon ? getFilePreview(doc.icon) : undefined;
+  try {
+    const validIds = technologyIds.filter(id => id && typeof id === 'string');
+    if (validIds.length === 0) return [];
 
-        // Récupération des technologies associées
-        let technologies: Technology[] = [];
-        if (doc.technologies_utilisees && doc.technologies_utilisees.length > 0) {
-            const techIds = doc.technologies_utilisees;
-            const techResponse = await databases.listDocuments(
-                DATABASE_ID,
-                COLLECTION_ID_TECHNOLOGIES,
-                [Query.equal('$id', techIds)]
-            );
-            
-            technologies = techResponse.documents.map(tech => ({
-                id: tech.$id,
-                nom: tech.nom,
-                type: tech.type,
-                icone: tech.icone ? getFilePreview(tech.icone) : undefined,
-                url_doc: tech.url_doc
-            }));
-        }
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.TECHNOLOGIES,
+      [Query.equal('$id', validIds), Query.limit(50)]
+    );
 
-        // Récupération des cas d'usage associés
-        let useCases: UseCase[] = [];
-        if (doc.use_cases && doc.use_cases.length > 0) {
-            const useCaseIds = doc.use_cases;
-            const useCaseResponse = await databases.listDocuments(
-                DATABASE_ID,
-                COLLECTION_ID_USE_CASES,
-                [Query.equal('$id', useCaseIds)]
-            );
-            
-            useCases = await Promise.all(useCaseResponse.documents.map(async useCase => ({
-                id: useCase.$id,
-                titre: useCase.titre,
-                description: useCase.description,
-                image: useCase.image ? getFilePreview(useCase.image) : undefined
-            })));
-        }
-
-        // Récupération des objectifs associés
-        let objectives: Objective[] = [];
-        if (doc.objectifs && doc.objectifs.length > 0) {
-            const objectiveIds = doc.objectifs;
-            const objectiveResponse = await databases.listDocuments(
-                DATABASE_ID,
-                COLLECTION_ID_OBJECTIFS,
-                [Query.equal('$id', objectiveIds)]
-            );
-            
-            objectives = await Promise.all(objectiveResponse.documents.map(async objective => ({
-                id: objective.$id,
-                titre: objective.titre,
-                description: objective.description,
-                icon: objective.icon ? getFilePreview(objective.icon) : undefined
-            })));
-        }
-
-        // Récupération de l'auteur
-        let author: Author = {
-            id: '',
-            nom: 'Anonyme',
-            poste: '',
-            email: ''
-        };
-        
-        if (doc.auteur) {
-            const authorResponse = await databases.getDocument(
-                DATABASE_ID,
-                COLLECTION_ID_AUTEURS,
-                doc.auteur
-            );
-            
-            author = {
-                id: authorResponse.$id,
-                nom: authorResponse.nom,
-                poste: authorResponse.poste,
-                photo: authorResponse.photo ? getFilePreview(authorResponse.photo) : undefined,
-                email: authorResponse.email
-            };
-        }
-
-        // Construction des tags
-        const tags = [doc.categorie];
-        if (technologies.length > 0) {
-            tags.push(...technologies.slice(0, 2).map(tech => tech.nom));
-        }
-
-        return {
-            id: doc.$id,
-            slug: doc.slug,
-            titre: doc.titre,
-            description_courte: doc.description_courte,
-            description_longue: doc.description_longue,
-            images: imageUrls,
-            videos_demo: doc.videos_demo || [],
-            technologies_utilisees: technologies,
-            icon: iconUrl,
-            categorie: doc.categorie,
-            fonctionnalites: doc.fonctionnalites || [],
-            objectifs: objectives,
-            use_cases: useCases,
-            liens_externes: doc.liens_externes || [],
-            auteur: author,
-            date_de_creation: new Date(doc.date_de_creation),
-            statut: doc.statut,
-            tags: tags
-        } as Solution;
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la solution:', error);
-        return null;
-    }
+    return response.documents.map(tech => ({
+      id: tech.$id,
+      nom: tech.nom || 'Technologie inconnue',
+      type: (tech.type as TechnologyType) || 'framework',
+      icone: tech.icone ? getFilePreview(tech.icone) : undefined,
+      url_doc: tech.url_doc || undefined
+    }));
+  } catch (error) {
+    console.error('Erreur lors de la récupération des technologies:', error);
+    return [];
+  }
 }
+
+/**
+ * Récupère les cas d'usage associés
+ */
+async function getUseCases(useCaseIds: string[]): Promise<UseCase[]> {
+  if (!Array.isArray(useCaseIds) || useCaseIds.length === 0) {
+    return [];
+  }
+
+  try {
+    const validIds = useCaseIds.filter(id => id && typeof id === 'string');
+    if (validIds.length === 0) return [];
+
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.USE_CASES,
+      [Query.equal('$id', validIds), Query.limit(50)]
+    );
+
+    return response.documents.map(useCase => ({
+      id: useCase.$id,
+      titre: useCase.titre || 'Cas d\'usage sans titre',
+      description: useCase.description || '',
+      image: useCase.image ? getFilePreview(useCase.image) : undefined
+    }));
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cas d\'usage:', error);
+    return [];
+  }
+}
+
+/**
+ * Récupère les objectifs associés
+ */
+async function getObjectives(objectiveIds: string[]): Promise<Objective[]> {
+  if (!Array.isArray(objectiveIds) || objectiveIds.length === 0) {
+    return [];
+  }
+
+  try {
+    const validIds = objectiveIds.filter(id => id && typeof id === 'string');
+    if (validIds.length === 0) return [];
+
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.OBJECTIVES,
+      [Query.equal('$id', validIds), Query.limit(50)]
+    );
+
+    return response.documents.map(objective => ({
+      id: objective.$id,
+      titre: objective.titre || 'Objectif sans titre',
+      description: objective.description || '',
+      icon: objective.icon ? getFilePreview(objective.icon) : undefined
+    }));
+  } catch (error) {
+    console.error('Erreur lors de la récupération des objectifs:', error);
+    return [];
+  }
+}
+
+/**
+ * Récupère les informations de l'auteur
+ */
+async function getAuthor(authorId: string): Promise<Author> {
+  const defaultAuthor: Author = {
+    id: '',
+    nom: 'Anonyme',
+    poste: 'Non spécifié',
+    email: ''
+  };
+
+  if (!authorId || typeof authorId !== 'string') {
+    return defaultAuthor;
+  }
+
+  try {
+    const authorResponse = await databases.getDocument(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.AUTHORS,
+      authorId
+    );
+
+    return {
+      id: authorResponse.$id,
+      nom: authorResponse.nom || 'Anonyme',
+      poste: authorResponse.poste || 'Non spécifié',
+      photo: authorResponse.photo ? getFilePreview(authorResponse.photo) : undefined,
+      email: authorResponse.email || ''
+    };
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'auteur:', error);
+    return defaultAuthor;
+  }
+}
+
+/**
+ * Génère les tags pour une solution
+ */
+function generateTags(solution: any, technologies: Technology[]): string[] {
+  const tags: string[] = [];
+  
+  // Ajouter la catégorie
+  if (solution.categorie) {
+    tags.push(solution.categorie);
+  }
+  
+  // Ajouter les technologies (limité à 3)
+  if (technologies.length > 0) {
+    tags.push(...technologies.slice(0, 3).map(tech => tech.nom));
+  }
+  
+  // Ajouter le statut si différent d'actif
+  if (solution.statut && solution.statut !== 'active') {
+    tags.push(solution.statut);
+  }
+  
+  return [...new Set(tags)]; // Supprimer les doublons
+}
+
+/**
+ * Transforme un document Appwrite en objet Solution
+ */
+async function transformDocumentToSolution(doc: any): Promise<Solution> {
+  try {
+    // Traitement en parallèle pour optimiser les performances
+    const [imageUrls, technologies, useCases, objectives, author] = await Promise.all([
+      processImageUrls(doc.images || []),
+      getTechnologies(doc.technologies_utilisees || []),
+      getUseCases(doc.use_cases || []),
+      getObjectives(doc.objectifs || []),
+      getAuthor(doc.auteur)
+    ]);
+
+    const iconUrl = doc.icon ? getFilePreview(doc.icon) : undefined;
+    const tags = generateTags(doc, technologies);
+
+    return {
+      id: doc.$id,
+      slug: doc.slug || '',
+      titre: doc.titre || 'Solution sans titre',
+      description_courte: doc.description_courte || '',
+      description_longue: doc.description_longue || '',
+      images: imageUrls,
+      videos_demo: doc.videos_demo || [],
+      technologies_utilisees: technologies,
+      icon: iconUrl,
+      categorie: (doc.categorie as SolutionCategory) || 'Autres',
+      fonctionnalites: doc.fonctionnalites || [],
+      objectifs: objectives,
+      use_cases: useCases,
+      liens_externes: doc.liens_externes || [],
+      auteur: author,
+      date_de_creation: new Date(doc.date_de_creation || Date.now()),
+      statut: (doc.statut as SolutionStatus) || 'draft',
+      tags: tags
+    };
+  } catch (error) {
+    console.error('Erreur lors de la transformation du document:', error);
+    throw error;
+  }
+}
+
+/**
+ * Récupère toutes les solutions avec pagination et cache
+ */
+export async function getSolutions(options?: {
+  status?: SolutionStatus[];
+  category?: SolutionCategory;
+  page?: number;
+  pageSize?: number;
+  useCache?: boolean;
+}): Promise<{
+  solutions: Solution[];
+  total: number;
+  hasMore: boolean;
+}> {
+  const {
+    status = ['active'],
+    category,
+    page = 1,
+    pageSize = CONFIG.DEFAULT_PAGE_SIZE,
+    useCache = true
+  } = options || {};
+
+  const cacheKey = `solutions_${JSON.stringify({ status, category, page, pageSize })}`;
+  
+  // Vérifier le cache
+  if (useCache) {
+    const cachedResult = solutionsCache.get(cacheKey);
+    if (cachedResult) {
+      return cachedResult as any;
+    }
+  }
+
+  try {
+    // Validation des paramètres
+    const validPageSize = Math.min(Math.max(1, pageSize), CONFIG.MAX_PAGE_SIZE);
+    const offset = (Math.max(1, page) - 1) * validPageSize;
+
+    // Construction des queries
+    const queries = [
+      Query.equal('statut', status),
+      Query.limit(validPageSize),
+      Query.offset(offset),
+      Query.orderDesc('date_de_creation')
+    ];
+
+    if (category) {
+      queries.push(Query.equal('categorie', category));
+    }
+
+    const [documentsResponse, totalResponse] = await Promise.all([
+      databases.listDocuments(CONFIG.DATABASE_ID, CONFIG.COLLECTIONS.SOLUTIONS, queries),
+      databases.listDocuments(CONFIG.DATABASE_ID, CONFIG.COLLECTIONS.SOLUTIONS, [
+        Query.equal('statut', status),
+        ...(category ? [Query.equal('categorie', category)] : []),
+        Query.limit(1)
+      ])
+    ]);
+
+    const solutions = await Promise.all(
+      documentsResponse.documents.map(doc => transformDocumentToSolution(doc))
+    );
+
+    const result = {
+      solutions,
+      total: totalResponse.total,
+      hasMore: offset + validPageSize < totalResponse.total
+    };
+
+    // Mettre en cache
+    if (useCache) {
+      solutionsCache.set(cacheKey, result as any);
+    }
+
+    return result;
+  } catch (error) {
+    handleAppwriteError(error, 'getSolutions');
+  }
+}
+
+/**
+ * Récupère une solution par son slug avec cache
+ */
+export async function getSolutionBySlug(
+  slug: string,
+  options?: { useCache?: boolean }
+): Promise<Solution | null> {
+  if (!slug || typeof slug !== 'string') {
+    throw new Error('Slug invalide fourni');
+  }
+
+  const { useCache = true } = options || {};
+  const cacheKey = `solution_${slug}`;
+
+  // Vérifier le cache
+  if (useCache) {
+    const cachedSolution = solutionCache.get(cacheKey);
+    if (cachedSolution) {
+      return cachedSolution;
+    }
+  }
+
+  try {
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.SOLUTIONS,
+      [
+        Query.equal('slug', slug),
+        Query.equal('statut', ['active']),
+        Query.limit(1)
+      ]
+    );
+
+    if (response.documents.length === 0) {
+      return null;
+    }
+
+    const solution = await transformDocumentToSolution(response.documents[0]);
+
+    // Mettre en cache
+    if (useCache) {
+      solutionCache.set(cacheKey, solution);
+    }
+
+    return solution;
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && (error as any).code === 404) {
+      return null;
+    }
+    handleAppwriteError(error, 'getSolutionBySlug');
+  }
+}
+
+/**
+ * Recherche de solutions avec filtres avancés
+ */
+export async function searchSolutions(searchTerm: string, options?: {
+  category?: SolutionCategory;
+  technologies?: string[];
+  page?: number;
+  pageSize?: number;
+}): Promise<{
+  solutions: Solution[];
+  total: number;
+  hasMore: boolean;
+}> {
+  const {
+    category,
+    technologies = [],
+    page = 1,
+    pageSize = CONFIG.DEFAULT_PAGE_SIZE
+  } = options || {};
+
+  try {
+    const validPageSize = Math.min(Math.max(1, pageSize), CONFIG.MAX_PAGE_SIZE);
+    const offset = (Math.max(1, page) - 1) * validPageSize;
+
+    const queries = [
+      Query.equal('statut', ['active']),
+      Query.search('titre', searchTerm),
+      Query.limit(validPageSize),
+      Query.offset(offset),
+      Query.orderDesc('date_de_creation')
+    ];
+
+    if (category) {
+      queries.push(Query.equal('categorie', category));
+    }
+
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.SOLUTIONS,
+      queries
+    );
+
+    let solutions = await Promise.all(
+      response.documents.map(doc => transformDocumentToSolution(doc))
+    );
+
+    // Filtrage par technologies si spécifié
+    if (technologies.length > 0) {
+      solutions = solutions.filter(solution =>
+        solution.technologies_utilisees.some(tech =>
+          technologies.includes(tech.id) || technologies.includes(tech.nom)
+        )
+      );
+    }
+
+    return {
+      solutions,
+      total: response.total,
+      hasMore: offset + validPageSize < response.total
+    };
+  } catch (error) {
+    handleAppwriteError(error, 'searchSolutions');
+  }
+}
+
+/**
+ * Récupère les catégories disponibles
+ */
+export async function getCategories(): Promise<SolutionCategory[]> {
+  try {
+    const response = await databases.listDocuments(
+      CONFIG.DATABASE_ID,
+      CONFIG.COLLECTIONS.SOLUTIONS,
+      [
+        Query.equal('statut', ['active']),
+        Query.select(['categorie']),
+        Query.limit(1000)
+      ]
+    );
+
+    const categories = [...new Set(
+      response.documents
+        .map(doc => doc.categorie)
+        .filter(Boolean)
+    )].sort() as SolutionCategory[];
+
+    return categories;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des catégories:', error);
+    return [];
+  }
+}
+
+/**
+ * Vide le cache
+ */
+export function clearCache(): void {
+  solutionsCache.clear();
+  solutionCache.clear();
+}
+
+/**
+ * Utilitaires pour les tests et le debugging
+ */
+export const utils = {
+  getConfig: () => CONFIG,
+  testConnection: async () => {
+    try {
+      // Utiliser listDocuments au lieu de list() qui n'existe pas
+      await databases.listDocuments(CONFIG.DATABASE_ID, CONFIG.COLLECTIONS.SOLUTIONS, [Query.limit(1)]);
+      return { success: true, message: 'Connexion Appwrite réussie' };
+    } catch (error) {
+      return { success: false, message: `Erreur de connexion: ${error}` };
+    }
+  },
+  clearCache
+};
+
+// Export des constantes pour usage externe
+export { CONFIG };
