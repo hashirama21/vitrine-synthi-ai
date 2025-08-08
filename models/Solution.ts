@@ -1,7 +1,6 @@
 // Fichier: models/Solution.ts - Version complète avec tous les types
 
 export type SolutionStatus = 'active' | 'draft' | 'archived';
-export type SolutionCategory = 'Machine Learning' | 'Computer Vision' | 'Robotique' | 'IA' | 'Automatisation' | 'Autres';
 export type TechnologyType = 'framework' | 'librairie' | 'langage';
 
 export interface Solution {
@@ -136,9 +135,27 @@ export interface SolutionStats {
     recentSolutions: Solution[];
 }
 
-// Constantes utiles
-export const SOLUTION_CATEGORIES: SolutionCategory[] = ['Machine Learning', 'Computer Vision', 'Robotique', 'IA', 'Automatisation', 'Autres'];
+// CORRECTION: Enum correctement formaté
+export enum SolutionCategory {
+  MachineLearning = 'Machine Learning',
+  ComputerVision = 'Computer Vision',
+  Robotique = 'Robotique',
+  IA = 'IA',
+  Automatisation = 'Automatisation',
+  Autres = 'Autres'
+}
+
+export const SOLUTION_CATEGORIES: SolutionCategory[] = [
+  SolutionCategory.MachineLearning,
+  SolutionCategory.ComputerVision,
+  SolutionCategory.Robotique,
+  SolutionCategory.IA,
+  SolutionCategory.Automatisation,
+  SolutionCategory.Autres
+];
+
 export const SOLUTION_STATUSES: SolutionStatus[] = ['active', 'draft', 'archived'];
+
 export const TECHNOLOGY_TYPES: TechnologyType[] = ['framework', 'librairie', 'langage'];
 
 // Guards de type pour la validation

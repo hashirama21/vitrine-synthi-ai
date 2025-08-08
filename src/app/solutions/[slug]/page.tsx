@@ -6,7 +6,7 @@ import FuturisticSolutionDetail from '@/components/solutions/FuturisticSolutionD
 export async function generateStaticParams() {
   try {
     const { solutions } = await getSolutions({ 
-      status: ['active'],
+      //status: ['active'],
       useCache: false,
       pageSize: 100 
     });
@@ -74,7 +74,7 @@ export default async function SolutionDetailPage({ params }: SolutionDetailPageP
     }
 
     const { solutions: allSolutions } = await getSolutions({ 
-      category: solution.categorie,
+      //category: solution.categorie,
       pageSize: 4,
       useCache: true 
     });
