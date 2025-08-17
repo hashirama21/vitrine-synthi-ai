@@ -35,7 +35,7 @@ const teamMembers = [
   {
     id: 2,
     slug: "fokam-minyim",
-    name: "Fokam Minyim",
+    name: "Fokam Melvin",
     role: "COO",
     image: "/founder/melvin.png",
     bio: "Master's in Machine Learning with expertise in neural networks and NLP applications.",
