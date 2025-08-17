@@ -11,14 +11,14 @@ const TrustSection = () => {
 
   const logos = [
     { 
-      src: '/images/dribbble.png', 
-      alt: 'Dribbble',
-      category: 'Design'
+      src: '/images/farmstomarket.png', 
+      alt: 'FarmstoMarket',
+      category: 'Startup'
     },
     { 
-      src: '/images/xxpeng.png', 
-      alt: 'Xpeng',
-      category: 'AI Auto'
+      src: '/images/ndinga-eats.png', 
+      alt: 'Ndinga Eats',
+      category: 'Startup'
     },
     { 
       src: '/images/ubora.png', 
@@ -120,110 +120,24 @@ const TrustSection = () => {
           </motion.p>
         </motion.div>
 
-        {/* Stats Section
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-              whileHover={{ 
-                scale: 1.05,
-                transition: { duration: 0.3 }
-              }}
-              className="group bg-gray-900/50 backdrop-blur-sm border border-[#6b7db8]/20 rounded-xl p-6 text-center hover:bg-gray-900/70 hover:border-[#6b7db8]/40 transition-all duration-300"
-            >
-              <motion.div
-                className="flex justify-center mb-3"
-                whileHover={{ scale: 1.2 }}
-                transition={{ duration: 0.3 }}
-              >
-                {stat.icon}
-              </motion.div>
-              <div className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent mb-1">
-                {stat.number}
-              </div>
-              <div className="text-sm text-[#6b6b6b] font-medium">
-                {stat.label}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>  */}
-
-        {/* Main Partners Grid
-        <motion.div
-          className="mb-12"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {logos.map((logo, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
-                whileHover={{ 
-                  scale: 1.05,
-                  y: -5,
-                  transition: { duration: 0.3 }
-                }}
-                className="group relative bg-gray-900/30 backdrop-blur-sm border border-[#6b7db8]/10 rounded-xl p-6 hover:bg-gray-900/50 hover:border-[#6b7db8]/30 transition-all duration-500 cursor-pointer"
-              >
-            
-                <div className="relative w-full h-12 mb-3 filter grayscale group-hover:grayscale-0 transition-all duration-500">
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
-                  />
-                </div>
-                
-              
-                <motion.div
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  initial={{ y: 5 }}
-                  whileHover={{ y: 0 }}
-                >
-                  <span className="inline-block px-2 py-1 bg-[#6b7db8]/20 text-[#6b7db8] text-xs font-medium rounded-full">
-                    {logo.category}
-                  </span>
-                </motion.div>
-
-               
-                <div className="absolute inset-0 bg-gradient-to-br from-[#6b7db8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>  */}
-
         {/* Infinite Scroll Section */}
         <motion.div
-          className="relative overflow-hidden py-6"
+          className="relative overflow-hidden py-12"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
         >
           {/* Gradient masks */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-black to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black to-transparent z-10"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
           
           <motion.div
-            className="flex space-x-16"
+            className="flex items-center space-x-20"
             animate={{
-              x: [0, -1200],
+              x: [0, -1400],
             }}
             transition={{
-              duration: 25,
+              duration: 30,
               repeat: Infinity,
               ease: "linear" as const,
             }}
@@ -231,15 +145,27 @@ const TrustSection = () => {
             {duplicatedLogos.map((logo, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 w-32 h-16 relative filter grayscale opacity-30 hover:grayscale-0 hover:opacity-80 transition-all duration-300"
+                className="flex-shrink-0 w-48 h-24 relative group"
               >
-                <Image
-                  src={logo.src}
-                  alt={logo.alt}
-                  fill
-                  className="object-contain"
-                  sizes="128px"
-                />
+                <div className="w-full h-full relative filter grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 ease-out transform hover:scale-105">
+                  <Image
+                    src={logo.src}
+                    alt={logo.alt}
+                    fill
+                    className="object-contain drop-shadow-lg"
+                    sizes="192px"
+                  />
+                </div>
+                
+                {/* Subtle glow effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#6b7db8]/5 via-[#6b7db8]/10 to-[#6b7db8]/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl"></div>
+                
+                {/* Category label */}
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="text-xs text-[#6b7db8] font-medium px-2 py-1 bg-[#6b7db8]/10 rounded-full backdrop-blur-sm border border-[#6b7db8]/20">
+                    {logo.category}
+                  </span>
+                </div>
               </div>
             ))}
           </motion.div>
