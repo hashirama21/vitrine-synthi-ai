@@ -18,5 +18,3 @@ export default function AboutPage() {
     </main>
   );
 }
-
-  {/* <FAQSection /><FeaturesDisplaySection />*/}

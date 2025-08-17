@@ -3,15 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ParticlesBackground from './ParticlesBackground';
 import SolutionCard from './SolutionCard';
 import FilterBar from './FilterBar';
+import FloatingGeometry from './FloatingGeometry';
 import { Solution } from '../../../models/Solution';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
-
 
 interface FuturisticSolutionsClientProps {
   solutions: {
@@ -24,7 +23,6 @@ interface FuturisticSolutionsClientProps {
 export default function FuturisticSolutionsClient({ solutions }: FuturisticSolutionsClientProps) {
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredSolutions, setFilteredSolutions] = useState(solutions.solutions);
 
@@ -33,23 +31,16 @@ export default function FuturisticSolutionsClient({ solutions }: FuturisticSolut
   useEffect(() => {
     if (headerRef.current) {
       gsap.fromTo(headerRef.current.children,
-        { y: -50, opacity: 0 },
+        { y: 30, opacity: 0 },
         { 
           y: 0, 
           opacity: 1, 
-          duration: 1, 
-          stagger: 0.2,
-          ease: "power3.out"
+          duration: 0.8, 
+          stagger: 0.15,
+          ease: "power2.out"
         }
       );
     }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   useEffect(() => {
@@ -61,135 +52,153 @@ export default function FuturisticSolutionsClient({ solutions }: FuturisticSolut
   }, [selectedCategory, solutions.solutions]);
 
   return (
-    <>
-      <ParticlesBackground />
-      
-      <div className="relative bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white min-h-screen overflow-hidden">
-        <div 
-          className="fixed w-6 h-6 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full pointer-events-none z-50 mix-blend-difference transition-all duration-100 ease-out"
+    <div className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white min-h-screen">
+      {/* Floating Geometry - decorative element */}
+      <FloatingGeometry />
+
+      {/* Subtle grid overlay */}
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
+        <div className="w-full h-full" 
           style={{
-            left: mousePosition.x - 12,
-            top: mousePosition.y - 12,
+            backgroundImage: `
+              linear-gradient(rgba(107, 125, 184, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(107, 125, 184, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px'
           }}
         />
+      </div>
 
-        <div className="fixed inset-0 opacity-5 pointer-events-none">
-          <div className="w-full h-full" 
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(99, 102, 241, 0.5) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.5) 1px, transparent 1px)
-              `,
-              backgroundSize: '50px 50px'
-            }}
-          />
+      <div className="container mx-auto px-4 py-20 relative z-10">
+        {/* Header Section */}
+        <div ref={headerRef} className="text-center mb-20 relative">
+          <div className="absolute inset-0 bg-gradient-radial from-[#6b7db8]/10 to-transparent blur-3xl" />
+          
+          <div className="relative space-y-6">
+            <div className="inline-flex items-center px-6 py-3 bg-[#6b7db8]/10 border border-[#6b7db8]/20 text-[#6b7db8] uppercase text-sm font-semibold tracking-widest rounded-full backdrop-blur-sm">
+              <div className="w-2 h-2 bg-[#6b7db8] rounded-full mr-3"></div>
+              Our Technological Arsenal
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200">
+                Advanced
+              </span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9]">
+                Solutions
+              </span>
+            </h1>
+
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Discover our comprehensive suite of cutting-edge technologies designed to transform your business operations and drive innovation.
+            </p>
+
+            <div className="w-24 h-1 bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] mx-auto rounded-full mt-8" />
+          </div>
         </div>
 
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div ref={headerRef} className="text-center mb-16 relative">
-            <div className="absolute inset-0 bg-gradient-radial from-indigo-500/20 to-transparent blur-3xl" />
-            
-            <div className="relative">
-              <p className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-6 text-lg tracking-wider uppercase font-light">
-                Our Technological Solutions
-              </p>
-              
-              <h1 className="text-6xl md:text-7xl font-black mb-8 relative">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-purple-200">
-                  FUTURE
-                </span>
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400">
-                  SOLUTIONS
-                </span>
-                
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full animate-shine" />
-              </h1>
+        {/* Filter Bar */}
+        <FilterBar 
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
 
-              <div className="w-32 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full" />
+        {/* Solutions Grid */}
+        <div 
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto relative z-10 mt-16"
+        >
+          {filteredSolutions.map((solution, index) => (
+            <SolutionCard 
+              key={solution.id} 
+              solution={solution} 
+              index={index} 
+            />
+          ))}
+        </div>
+
+        {/* Empty state */}
+        {filteredSolutions.length === 0 && (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 mx-auto mb-6 p-4 bg-[#6b7db8]/10 rounded-2xl border border-[#6b7db8]/20">
+              <svg className="w-full h-full text-[#6b7db8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.417-1.007-5.862-2.625M15 21H9a2 2 0 01-2-2V5a2 2 0 012-2h6a2 2 0 012 2v14a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">No Solutions Found</h3>
+            <p className="text-gray-400 mb-6">No solutions match the current filter criteria.</p>
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="px-6 py-3 bg-[#6b7db8] hover:bg-[#5a6ba3] text-white font-medium rounded-xl transition-colors duration-300"
+            >
+              Show All Solutions
+            </button>
+          </div>
+        )}
+
+        {/* Stats Section */}
+        <div className="mt-24 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm p-8 rounded-2xl border border-[#6b7db8]/15 hover:border-[#6b7db8]/30 transition-all duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] mb-3">
+                {solutions.total}
+              </div>
+              <div className="text-gray-300 text-sm font-medium uppercase tracking-wider">
+                Total Solutions
+              </div>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm p-8 rounded-2xl border border-[#6b7db8]/15 hover:border-[#6b7db8]/30 transition-all duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] mb-3">
+                {categories.length}
+              </div>
+              <div className="text-gray-300 text-sm font-medium uppercase tracking-wider">
+                Categories
+              </div>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm p-8 rounded-2xl border border-[#6b7db8]/15 hover:border-[#6b7db8]/30 transition-all duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] mb-3">
+                {solutions.solutions.reduce((acc, s) => acc + (s.technologies_utilisees?.length || 0), 0)}
+              </div>
+              <div className="text-gray-300 text-sm font-medium uppercase tracking-wider">
+                Technologies
+              </div>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm p-8 rounded-2xl border border-[#6b7db8]/15 hover:border-[#6b7db8]/30 transition-all duration-300">
+              <div className="text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] mb-3">
+                100%
+              </div>
+              <div className="text-gray-300 text-sm font-medium uppercase tracking-wider">
+                Innovation Rate
+              </div>
             </div>
           </div>
+        </div>
 
-          <FilterBar 
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-
-          <div 
-            ref={gridRef}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto relative z-10"
-          >
-            {filteredSolutions.map((solution, index) => (
-              <SolutionCard 
-                key={solution.id} 
-                solution={solution} 
-                index={index} 
+        {/* Bottom Accent */}
+        <div className="flex justify-center mt-20">
+          <div className="flex space-x-2">
+            {[...Array(5)].map((_, i) => (
+              <div 
+                key={i} 
+                className="w-2 h-2 rounded-full bg-[#6b7db8]/60"
               />
             ))}
           </div>
-
-          <div className="mt-20 text-center">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-indigo-500/20">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
-                  {solutions.total}
-                </div>
-                <div className="text-gray-300 text-sm uppercase tracking-wider">
-                  Total Solutions
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-indigo-500/20">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
-                  {categories.length}
-                </div>
-                <div className="text-gray-300 text-sm uppercase tracking-wider">
-                  Categories
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-indigo-500/20">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
-                  {solutions.solutions.reduce((acc, s) => acc + s.technologies_utilisees.length, 0)}
-                </div>
-                <div className="text-gray-300 text-sm uppercase tracking-wider">
-                  Technologies
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-indigo-500/20">
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2">
-                  100%
-                </div>
-                <div className="text-gray-300 text-sm uppercase tracking-wider">
-                  Innovation
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-16 space-x-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="w-2 h-2 rounded-full bg-indigo-400/50 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
-            ))}
-          </div>
         </div>
-
-        <div className="fixed inset-0 pointer-events-none bg-gradient-radial from-transparent via-transparent to-black/30" />
       </div>
 
+      {/* Ambient overlay */}
+      <div className="fixed inset-0 pointer-events-none bg-gradient-radial from-transparent via-transparent to-black/20" />
+
       <style jsx>{`
-        @keyframes shine {
-          0% { transform: translateX(-100%) skewX(12deg); }
-          100% { transform: translateX(200%) skewX(12deg); }
-        }
-        
-        .animate-shine {
-          animation: shine 3s infinite;
-        }
-        
         .bg-gradient-radial {
           background: radial-gradient(circle at center, var(--tw-gradient-stops));
         }
       `}</style>
-    </>
+    </div>
   );
 }

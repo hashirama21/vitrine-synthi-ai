@@ -3,6 +3,7 @@ const nextConfig = {
     images: {
       domains: [
         'www.automate.org',
+        'syd.cloud.appwrite.io',
         'images.unsplash.com',
         'cdn.sanity.io',
         'cdn.pixabay.com',

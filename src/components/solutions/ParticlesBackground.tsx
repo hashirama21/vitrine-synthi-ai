@@ -20,23 +20,38 @@ const ParticlesBackground = () => {
     renderer.setClearColor(0x000000, 0);
     mountRef.current.appendChild(renderer.domElement);
 
+    // Reduced particle count for better performance
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 2000;
+    const particlesCount = 800;
     const posArray = new Float32Array(particlesCount * 3);
     const colorsArray = new Float32Array(particlesCount * 3);
 
+    // Base color: #6b7db8 (107, 125, 184)
+    const baseColor = new THREE.Color(0x6b7db8);
+    
     for (let i = 0; i < particlesCount * 3; i += 3) {
-      posArray[i] = (Math.random() - 0.5) * 100;
-      posArray[i + 1] = (Math.random() - 0.5) * 100;
-      posArray[i + 2] = (Math.random() - 0.5) * 100;
+      // More structured distribution
+      posArray[i] = (Math.random() - 0.5) * 80;
+      posArray[i + 1] = (Math.random() - 0.5) * 80;
+      posArray[i + 2] = (Math.random() - 0.5) * 60;
 
-      const colorChoice = Math.random();
-      if (colorChoice < 0.33) {
-        colorsArray[i] = 0.3; colorsArray[i + 1] = 0.6; colorsArray[i + 2] = 1;
-      } else if (colorChoice < 0.66) {
-        colorsArray[i] = 0.4; colorsArray[i + 1] = 0.0; colorsArray[i + 2] = 1;
+      // Variations of the base color #6b7db8
+      const colorVariation = Math.random();
+      if (colorVariation < 0.4) {
+        // Original color #6b7db8
+        colorsArray[i] = 107/255;
+        colorsArray[i + 1] = 125/255;
+        colorsArray[i + 2] = 184/255;
+      } else if (colorVariation < 0.7) {
+        // Lighter variant #8a9fd9
+        colorsArray[i] = 138/255;
+        colorsArray[i + 1] = 159/255;
+        colorsArray[i + 2] = 217/255;
       } else {
-        colorsArray[i] = 0.8; colorsArray[i + 1] = 0.0; colorsArray[i + 2] = 1;
+        // Darker variant #5a6ba3
+        colorsArray[i] = 90/255;
+        colorsArray[i + 1] = 107/255;
+        colorsArray[i + 2] = 163/255;
       }
     }
 
@@ -44,32 +59,27 @@ const ParticlesBackground = () => {
     particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
 
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.8,
+      size: 1.2,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.6,
       blending: THREE.AdditiveBlending
     });
 
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
-    camera.position.z = 50;
+    camera.position.z = 40;
     
     sceneRef.current = scene;
     rendererRef.current = renderer;
     particlesRef.current = particles;
 
+    // Minimal animation - very subtle rotation only
     const animateParticles = () => {
       if (particlesRef.current) {
-        particlesRef.current.rotation.x += 0.001;
-        particlesRef.current.rotation.y += 0.002;
-        
-        const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-        for (let i = 0; i < positions.length; i += 3) {
-          positions[i + 1] += Math.sin(Date.now() * 0.001 + positions[i] * 0.01) * 0.01;
-        }
-        particlesRef.current.geometry.attributes.position.needsUpdate = true;
+        // Very slow, subtle rotation
+        particlesRef.current.rotation.y += 0.0005;
       }
       
       renderer.render(scene, camera);
