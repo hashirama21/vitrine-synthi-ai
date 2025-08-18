@@ -1,28 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 import React from 'react';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock,
-  Send,
-  User,
-  MessageSquare,
-  Building,
-  Globe,
-  Calendar,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  ArrowRight,
-  Sparkles,
-  Brain,
-  Bot,
-  Eye
-} from 'lucide-react';
 
 // Types
 interface FormData {
@@ -38,48 +17,113 @@ interface FormData {
 }
 
 interface ContactInfo {
-  icon: React.ComponentType<any>;
+  icon: React.ReactNode;
   title: string;
   details: string[];
   gradient: string;
 }
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  opacity: number;
-  color: string;
-  update: () => void;
-  draw: (ctx: CanvasRenderingContext2D) => void;
-}
+// Icônes SVG personnalisées
+const MapPinIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+  </svg>
+);
+
+const PhoneIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+);
+
+const BuildingIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+  </svg>
+);
+
+const MessageIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+  </svg>
+);
+
+const SendIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+  </svg>
+);
+
+const SparkleIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12 2l2.09 6.26L20 10l-5.91 1.74L12 18l-2.09-6.26L4 10l5.91-1.74L12 2z"/>
+    <path d="M19 2l1.09 3.26L24 6l-3.91 0.74L19 10l-1.09-3.26L14 6l3.91-0.74L19 2z"/>
+    <path d="M5 14l0.54 1.63L7 16l-1.46 0.37L5 18l-0.54-1.63L3 16l1.46-0.37L5 14z"/>
+  </svg>
+);
+
+const AlertIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+  </svg>
+);
+
+const LoaderIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 animate-spin">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25"/>
+    <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+  </svg>
+);
 
 const contactInfos: ContactInfo[] = [
   {
-    icon: MapPin,
+    icon: <MapPinIcon />,
     title: 'Our Location',
     details: ['Douala, Cameroon', 'Central Africa Hub'],
-    gradient: 'from-blue-500 to-cyan-500'
+    gradient: 'from-[#6b7db8] to-[#8a9fd9]'
   },
   {
-    icon: Mail,
+    icon: <MailIcon />,
     title: 'Email Us',
     details: ['hello@synthi-ai.com', 'support@synthi-ai.com'],
-    gradient: 'from-purple-500 to-pink-500'
+    gradient: 'from-[#8a9fd9] to-[#b3c0de]'
   },
   {
-    icon: Phone,
+    icon: <PhoneIcon />,
     title: 'Call Us',
     details: ['+237 6XX XXX XXX', '+237 6XX XXX XXX'],
-    gradient: 'from-green-500 to-emerald-500'
+    gradient: 'from-[#b3c0de] to-[#6b7db8]'
   },
   {
-    icon: Clock,
+    icon: <ClockIcon />,
     title: 'Business Hours',
     details: ['Mon - Fri: 8AM - 6PM', 'Sat: 9AM - 4PM'],
-    gradient: 'from-orange-500 to-red-500'
+    gradient: 'from-[#6b7db8] to-[#9fb5e5]'
   }
 ];
 
@@ -103,107 +147,6 @@ const budgetRanges = [
   'Let\'s Discuss'
 ];
 
-// Composant ParticleBackground
-const ParticleBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | undefined>(undefined);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const resizeCanvas = () => {
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = document.documentElement.scrollHeight;
-      }
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    const particles: Particle[] = [];
-    const particleCount = 80;
-
-    class ParticleClass implements Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-      color: string;
-
-      constructor() {
-        if (!canvas) return;
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = (Math.random() - 0.5) * 0.3;
-        this.size = Math.random() * 1.5 + 0.5;
-        this.opacity = Math.random() * 0.3 + 0.1;
-        const colors = ['#3b82f6', '#06b6d4', '#8b5cf6'];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-      }
-
-      update() {
-        if (!canvas) return;
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-      }
-
-      draw(context: CanvasRenderingContext2D) {
-        context.save();
-        context.globalAlpha = this.opacity;
-        context.fillStyle = this.color;
-        context.beginPath();
-        context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        context.fill();
-        context.restore();
-      }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new ParticleClass());
-    }
-
-    const animate = () => {
-      if (ctx && canvas) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(particle => {
-          particle.update();
-          particle.draw(ctx);
-        });
-
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (animationRef.current !== undefined) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-30"
-    />
-  );
-};
-
 export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -219,46 +162,31 @@ export default function ContactPage() {
 
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [isInView, setIsInView] = useState(false);
 
-  const heroRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLDivElement>(null);
-  const contactInfoRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-    // Animation d'entrée
-    tl.fromTo(
-      heroRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1 }
-    )
-    .fromTo(
-      contactInfoRef.current?.children || [],
-      { opacity: 0, y: 30, scale: 0.9 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.1 },
-      '-=0.5'
-    )
-    .fromTo(
-      formRef.current,
-      { opacity: 0, x: 50 },
-      { opacity: 1, x: 0, duration: 1 },
-      '-=0.8'
-    )
-    .fromTo(
-      mapRef.current,
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1, duration: 0.8 },
-      '-=0.5'
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.1 }
     );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user starts typing
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -288,12 +216,10 @@ export default function ContactPage() {
 
     setFormStatus('loading');
 
-    // Simulate API call
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setFormStatus('success');
       
-      // Reset form after success
       setTimeout(() => {
         setFormData({
           firstName: '',
@@ -315,587 +241,409 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 relative overflow-hidden">
+    <div ref={sectionRef} className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Effects */}
-      <ParticleBackground />
-      
-      {/* Hero Section */}
-      <section ref={heroRef} className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center mb-6 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 backdrop-blur-sm">
-            <Sparkles className="w-5 h-5 text-blue-400 mr-2" />
-            <span className="text-lg font-semibold text-white">Get In Touch</span>
-          </div>
-          
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#6b7db8]/5 via-transparent to-[#8a9fd9]/5"></div>
+        
+        {/* Floating particles */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute bg-gradient-to-br from-[#6b7db8]/20 to-[#8a9fd9]/15 rounded-full opacity-40"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 8 + 4}px`,
+              height: `${Math.random() * 8 + 4}px`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${Math.random() * 10 + 20}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* Hero Section */}
+        <section className={`pt-32 pb-16 text-center transition-all duration-1000 ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
+         
+          <h1 className="text-5xl lg:text-7xl font-bold leading-tight mb-8">
+            <span className="block text-white mb-2">
               Ready to Transform
             </span>
-            <br />
-            <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[#6b7db8] via-[#8a9fd9] to-[#b3c0de] bg-clip-text text-transparent">
               Your Business with AI?
             </span>
           </h1>
           
-          <p className="max-w-3xl mx-auto text-xl text-slate-300 mb-8">
+          <p className="max-w-3xl mx-auto text-xl text-gray-300 leading-relaxed">
             Let&apos;s discuss how SYNTHI AI can revolutionize your operations with cutting-edge artificial intelligence solutions tailored for African businesses.
           </p>
+        </section>
 
-          {/* Floating AI Icons */}
-          <div className="flex justify-center items-center gap-8 mb-12">
-            <div className="p-3 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 backdrop-blur-sm animate-pulse">
-              <Brain className="w-8 h-8 text-blue-400" />
-            </div>
-            <div className="p-3 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 backdrop-blur-sm animate-pulse">
-              <Eye className="w-8 h-8 text-purple-400" />
-            </div>
-            <div className="p-3 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 backdrop-blur-sm animate-pulse">
-              <Bot className="w-8 h-8 text-green-400" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Info Cards */}
-      <section ref={contactInfoRef} className="relative py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        {/* Contact Info Cards */}
+        <section className={`py-16 transition-all duration-1000 ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`} style={{ transitionDelay: '0.2s' }}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {contactInfos.map((info, index) => {
-              const IconComponent = info.icon;
-              return (
-                <div
-                  key={index}
-                  className="group p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 hover:transform hover:scale-105"
-                >
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${info.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className="w-6 h-6 text-white" />
+            {contactInfos.map((info, index) => (
+              <div
+                key={index}
+                className="group p-6 rounded-2xl bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-[#6b7db8]/40 transition-all duration-300 hover:scale-105"
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${info.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className="text-white">
+                    {info.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">{info.title}</h3>
-                  {info.details.map((detail, idx) => (
-                    <p key={idx} className="text-slate-300 text-sm">{detail}</p>
-                  ))}
                 </div>
-              );
-            })}
+                <h3 className="text-lg font-semibold text-white mb-2">{info.title}</h3>
+                {info.details.map((detail, idx) => (
+                  <p key={idx} className="text-gray-400 text-sm">{detail}</p>
+                ))}
+              </div>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Content */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            
-            {/* Contact Form */}
-            <div ref={formRef} className="order-2 lg:order-1">
-              <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8">
-                <h2 className="text-3xl font-bold text-white mb-6">Send us a message</h2>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name Fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-slate-300 mb-2">
-                        First Name *
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
-                            errors.firstName ? 'border-red-500' : 'border-white/20'
-                          }`}
-                          placeholder="Your first name"
-                        />
-                      </div>
-                      {errors.firstName && (
-                        <p className="mt-1 text-sm text-red-400 flex items-center">
-                          <AlertCircle className="w-4 h-4 mr-1" />
-                          {errors.firstName}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-slate-300 mb-2">
-                        Last Name *
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
-                            errors.lastName ? 'border-red-500' : 'border-white/20'
-                          }`}
-                          placeholder="Your last name"
-                        />
-                      </div>
-                      {errors.lastName && (
-                        <p className="mt-1 text-sm text-red-400 flex items-center">
-                          <AlertCircle className="w-4 h-4 mr-1" />
-                          {errors.lastName}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Email & Phone */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                        Email Address *
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
-                            errors.email ? 'border-red-500' : 'border-white/20'
-                          }`}
-                          placeholder="your.email@example.com"
-                        />
-                      </div>
-                      {errors.email && (
-                        <p className="mt-1 text-sm text-red-400 flex items-center">
-                          <AlertCircle className="w-4 h-4 mr-1" />
-                          {errors.email}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-slate-300 mb-2">
-                        Phone Number
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                          placeholder="+237 6XX XXX XXX"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Company & Subject */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="company" className="block text-sm font-medium text-slate-300 mb-2">
-                        Company
-                      </label>
-                      <div className="relative">
-                        <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="text"
-                          id="company"
-                          name="company"
-                          value={formData.company}
-                          onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                          placeholder="Your company name"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-slate-300 mb-2">
-                        Subject
-                      </label>
-                      <div className="relative">
-                        <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                          type="text"
-                          id="subject"
-                          name="subject"
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                          placeholder="Brief subject"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Service & Budget */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="service" className="block text-sm font-medium text-slate-300 mb-2">
-                        Service of Interest *
-                      </label>
-                      <select
-                        id="service"
-                        name="service"
-                        value={formData.service}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ${
-                          errors.service ? 'border-red-500' : 'border-white/20'
-                        }`}
-                      >
-                        <option value="">Select a service</option>
-                        {services.map((service, index) => (
-                          <option key={index} value={service} className="bg-slate-800 text-white">
-                            {service}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.service && (
-                        <p className="mt-1 text-sm text-red-400 flex items-center">
-                          <AlertCircle className="w-4 h-4 mr-1" />
-                          {errors.service}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="budget" className="block text-sm font-medium text-slate-300 mb-2">
-                        Project Budget
-                      </label>
-                      <select
-                        id="budget"
-                        name="budget"
-                        value={formData.budget}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-                      >
-                        <option value="">Select budget range</option>
-                        {budgetRanges.map((range, index) => (
-                          <option key={index} value={range} className="bg-slate-800 text-white">
-                            {range}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Message */}
+        {/* Main Contact Form */}
+        <section className={`py-16 transition-all duration-1000 ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`} style={{ transitionDelay: '0.4s' }}>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gray-900/50 backdrop-blur-xl rounded-3xl border border-gray-700/50 p-8 lg:p-12">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Send us a message</h2>
+                <p className="text-gray-400 text-lg">We&apos;ll get back to you within 24 hours</p>
+              </div>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
-                      Message *
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
+                      First Name *
                     </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 resize-none ${
-                        errors.message ? 'border-red-500' : 'border-white/20'
-                      }`}
-                      placeholder="Tell us about your project, goals, and how we can help you..."
-                    />
-                    {errors.message && (
-                      <p className="mt-1 text-sm text-red-400 flex items-center">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        {errors.message}
+                    <div className="relative">
+                      <UserIcon />
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        className={`w-full pl-12 pr-4 py-4 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300 ${
+                          errors.firstName ? 'border-red-500' : 'border-gray-600/50'
+                        }`}
+                        placeholder="Your first name"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <UserIcon />
+                      </div>
+                    </div>
+                    {errors.firstName && (
+                      <p className="mt-2 text-sm text-red-400 flex items-center">
+                        <AlertIcon />
+                        <span className="ml-1">{errors.firstName}</span>
                       </p>
                     )}
                   </div>
 
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={formStatus === 'loading'}
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 flex items-center justify-center"
-                  >
-                    {formStatus === 'loading' && (
-                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
+                      Last Name *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        className={`w-full pl-12 pr-4 py-4 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300 ${
+                          errors.lastName ? 'border-red-500' : 'border-gray-600/50'
+                        }`}
+                        placeholder="Your last name"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <UserIcon />
+                      </div>
+                    </div>
+                    {errors.lastName && (
+                      <p className="mt-2 text-sm text-red-400 flex items-center">
+                        <AlertIcon />
+                        <span className="ml-1">{errors.lastName}</span>
+                      </p>
                     )}
-                    {formStatus === 'success' && (
-                      <CheckCircle className="w-5 h-5 mr-2" />
+                  </div>
+                </div>
+
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                      Email Address *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full pl-12 pr-4 py-4 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300 ${
+                          errors.email ? 'border-red-500' : 'border-gray-600/50'
+                        }`}
+                        placeholder="your.email@example.com"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <MailIcon />
+                      </div>
+                    </div>
+                    {errors.email && (
+                      <p className="mt-2 text-sm text-red-400 flex items-center">
+                        <AlertIcon />
+                        <span className="ml-1">{errors.email}</span>
+                      </p>
                     )}
-                    {formStatus === 'error' && (
-                      <AlertCircle className="w-5 h-5 mr-2" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                      Phone Number
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300"
+                        placeholder="+237 6XX XXX XXX"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <PhoneIcon />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Company & Subject */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-2">
+                      Company
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="company"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300"
+                        placeholder="Your company name"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <BuildingIcon />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
+                      Subject
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300"
+                        placeholder="Brief subject"
+                      />
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <MessageIcon />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Service & Budget */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="service" className="block text-sm font-medium text-gray-300 mb-2">
+                      Service of Interest *
+                    </label>
+                    <select
+                      id="service"
+                      name="service"
+                      value={formData.service}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-4 bg-gray-800/50 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300 ${
+                        errors.service ? 'border-red-500' : 'border-gray-600/50'
+                      }`}
+                    >
+                      <option value="">Select a service</option>
+                      {services.map((service, index) => (
+                        <option key={index} value={service} className="bg-gray-800 text-white">
+                          {service}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.service && (
+                      <p className="mt-2 text-sm text-red-400 flex items-center">
+                        <AlertIcon />
+                        <span className="ml-1">{errors.service}</span>
+                      </p>
                     )}
-                    {formStatus === 'idle' && (
-                      <Send className="w-5 h-5 mr-2" />
-                    )}
-                    
+                  </div>
+
+                  <div>
+                    <label htmlFor="budget" className="block text-sm font-medium text-gray-300 mb-2">
+                      Project Budget
+                    </label>
+                    <select
+                      id="budget"
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="">Select budget range</option>
+                      {budgetRanges.map((range, index) => (
+                        <option key={index} value={range} className="bg-gray-800 text-white">
+                          {range}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                    Message *
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-4 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6b7db8] focus:border-transparent transition-all duration-300 resize-none ${
+                      errors.message ? 'border-red-500' : 'border-gray-600/50'
+                    }`}
+                    placeholder="Tell us about your project, goals, and how we can help you..."
+                  />
+                  {errors.message && (
+                    <p className="mt-2 text-sm text-red-400 flex items-center">
+                      <AlertIcon />
+                      <span className="ml-1">{errors.message}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={formStatus === 'loading'}
+                  className="w-full bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] hover:from-[#5a6ba3] hover:to-[#7a8fc9] disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg shadow-[#6b7db8]/25 hover:shadow-[#6b7db8]/40 flex items-center justify-center"
+                >
+                  {formStatus === 'loading' && <LoaderIcon />}
+                  {formStatus === 'success' && <CheckIcon />}
+                  {formStatus === 'error' && <AlertIcon />}
+                  {formStatus === 'idle' && <SendIcon />}
+                  
+                  <span className="ml-2">
                     {formStatus === 'loading' && 'Sending Message...'}
                     {formStatus === 'success' && 'Message Sent Successfully!'}
                     {formStatus === 'error' && 'Failed to Send Message'}
                     {formStatus === 'idle' && 'Send Message'}
-                  </button>
-
-                  {formStatus === 'success' && (
-                    <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-                      <p className="text-green-400 text-center">
-                        Thank you for your message! We&apos;ll get back to you within 24 hours.
-                      </p>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </div>
-
-            {/* Map & Additional Info */}
-            <div className="order-1 lg:order-2 space-y-8">
-              {/* Map */}
-              <div ref={mapRef} className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <MapPin className="w-6 h-6 text-blue-400 mr-2" />
-                  Visit Our Office
-                </h3>
-                
-                {/* Placeholder Map */}
-                <div className="w-full h-64 bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-2xl border border-blue-500/30 flex items-center justify-center">
-                  <div className="text-center">
-                    <Globe className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                    <p className="text-white font-semibold">Interactive Map</p>
-                    <p className="text-slate-400 text-sm">Douala, Cameroon</p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 p-4 bg-blue-500/10 rounded-xl border border-blue-500/30">
-                  <p className="text-blue-400 font-semibold mb-2">🌍 Central Africa&apos;s AI Hub</p>
-                  <p className="text-slate-300 text-sm">
-                    Located in the heart of Douala, we&apos;re pioneering AI innovation across Central Africa. 
-                    Our modern office features state-of-the-art AI labs and collaboration spaces.
-                  </p>
-                </div>
-              </div>
-
-              {/* Schedule Meeting */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <Calendar className="w-6 h-6 text-purple-400 mr-2" />
-                  Schedule a Meeting
-                </h3>
-                
-                <p className="text-slate-300 mb-6">
-                  Prefer a direct conversation? Book a consultation with our AI experts to discuss your project requirements.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  <div className="p-4 bg-purple-500/10 rounded-xl border border-purple-500/30">
-                    <h4 className="text-white font-semibold mb-2">Free Consultation</h4>
-                    <p className="text-slate-400 text-sm">30-minute discovery call</p>
-                  </div>
-                  <div className="p-4 bg-green-500/10 rounded-xl border border-green-500/30">
-                    <h4 className="text-white font-semibold mb-2">Technical Deep Dive</h4>
-                    <p className="text-slate-400 text-sm">1-hour technical session</p>
-                  </div>
-                </div>
-
-                <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 mr-2" />
-                  Book a Meeting
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  </span>
                 </button>
-              </div>
 
-              {/* Response Time */}
-              <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <Clock className="w-6 h-6 text-orange-400 mr-2" />
-                  Response Time
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
-                    <div>
-                      <h4 className="text-white font-semibold">Email Queries</h4>
-                      <p className="text-slate-400 text-sm">General information and questions</p>
-                    </div>
-                    <span className="text-orange-400 font-bold">24h</span>
+                {formStatus === 'success' && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                    <p className="text-green-400 text-center">
+                      Thank you for your message! We&apos;ll get back to you within 24 hours.
+                    </p>
                   </div>
-
-                  <div className="flex items-center justify-between p-4 bg-green-500/10 rounded-xl border border-green-500/30">
-                    <div>
-                      <h4 className="text-white font-semibold">Project Inquiries</h4>
-                      <p className="text-slate-400 text-sm">Business proposals and partnerships</p>
-                    </div>
-                    <span className="text-green-400 font-bold">12h</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-red-500/10 rounded-xl border border-red-500/30">
-                    <div>
-                      <h4 className="text-white font-semibold">Urgent Support</h4>
-                      <p className="text-slate-400 text-sm">Critical technical issues</p>
-                    </div>
-                    <span className="text-red-400 font-bold">2h</span>
-                  </div>
-                </div>
-
-                <div className="mt-6 p-4 bg-blue-500/10 rounded-xl border border-blue-500/30">
-                  <p className="text-blue-400 font-semibold mb-2">🚀 Priority Support Available</p>
-                  <p className="text-slate-300 text-sm">
-                    Enterprise clients receive dedicated support with guaranteed response times and direct access to our technical team.
-                  </p>
-                </div>
-              </div>
+                )}
+              </form>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FAQ Section */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xl text-slate-300">
-              Quick answers to common questions about our AI services
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {[
-              {
-                question: "What AI services does SYNTHI AI offer?",
-                answer: "We offer comprehensive AI solutions including Computer Vision, Machine Learning, Robotics Automation, Natural Language Processing, Predictive Analytics, and AI Strategy Consulting. Our services are specifically designed for African businesses and markets."
-              },
-              {
-                question: "How long does a typical AI project take?",
-                answer: "Project timelines vary based on complexity and scope. Simple AI integrations can take 2-4 weeks, while complex enterprise solutions may require 3-6 months. We provide detailed timelines during our consultation phase."
-              },
-              {
-                question: "Do you provide ongoing support after project completion?",
-                answer: "Yes! We offer comprehensive post-deployment support including system monitoring, performance optimization, updates, and training. Our support packages are tailored to your specific needs and budget."
-              },
-              {
-                question: "Can you work with existing business systems?",
-                answer: "Absolutely! Our AI solutions are designed to integrate seamlessly with existing business systems, databases, and workflows. We conduct thorough system assessments to ensure smooth integration."
-              },
-              {
-                question: "What industries do you specialize in?",
-                answer: "We work across various industries including healthcare, finance, agriculture, manufacturing, retail, and logistics. Our expertise in African markets allows us to understand unique regional challenges and opportunities."
-              },
-              {
-                question: "How do you ensure data security and privacy?",
-                answer: "Data security is our top priority. We implement enterprise-grade encryption, secure cloud infrastructure, compliance with international standards (GDPR, ISO 27001), and provide detailed security audits for all projects."
-              }
-            ].map((faq, index) => (
-              <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300">
-                <h3 className="text-lg font-semibold text-white mb-3 flex items-start">
-                  <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mr-3">Q:</span>
-                  {faq.question}
-                </h3>
-                <p className="text-slate-300 leading-relaxed pl-6">
-                  <span className="text-green-400 font-semibold mr-2">A:</span>
-                  {faq.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-xl rounded-3xl border border-white/10 p-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-              Ready to Start Your AI Journey?
-            </h2>
-            <p className="text-xl text-slate-300 mb-8">
-              Join over 50+ African companies already transforming their businesses with SYNTHI AI&apos;s cutting-edge solutions.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 flex items-center justify-center">
-                <Send className="w-5 h-5 mr-2" />
-                Get Started Today
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </button>
+        {/* Call to Action */}
+        <section className={`py-16 transition-all duration-1000 ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`} style={{ transitionDelay: '0.6s' }}>
+          <div className="text-center">
+            <div className="max-w-4xl mx-auto bg-gradient-to-r from-[#6b7db8]/10 to-[#8a9fd9]/10 backdrop-blur-xl rounded-3xl border border-[#6b7db8]/20 p-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+                Ready to Start Your AI Journey?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Join over 50+ African companies already transforming their businesses with SYNTHI AI&apos;s cutting-edge solutions.
+              </p>
               
-              <button className="border-2 border-white/30 hover:border-white/50 text-white font-semibold py-4 px-8 rounded-xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm flex items-center justify-center">
-                <Calendar className="w-5 h-5 mr-2" />
-                Schedule Consultation
-              </button>
-            </div>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400 mb-1">500+</div>
-                <div className="text-slate-400 text-sm">AI Projects Delivered</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-cyan-400 mb-1">50+</div>
-                <div className="text-slate-400 text-sm">African Companies</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-400 mb-1">99%</div>
-                <div className="text-slate-400 text-sm">Client Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Links & Additional Contact */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Social Media */}
-            <div className="text-center md:text-left">
-              <h3 className="text-xl font-bold text-white mb-4">Follow Us</h3>
-              <div className="flex justify-center md:justify-start space-x-4">
-                {[
-                  { name: 'LinkedIn', color: 'from-blue-600 to-blue-700' },
-                  { name: 'Twitter', color: 'from-cyan-400 to-cyan-500' },
-                  { name: 'GitHub', color: 'from-gray-600 to-gray-700' },
-                  { name: 'YouTube', color: 'from-red-600 to-red-700' }
-                ].map((social, index) => (
-                  <button
-                    key={index}
-                    className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-lg`}
-                  >
-                    <Globe className="w-5 h-5 text-white" />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Emergency Contact */}
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-white mb-4">Emergency Support</h3>
-              <p className="text-slate-300 mb-2">24/7 Critical Support Hotline</p>
-              <a href="tel:+237600000000" className="text-red-400 font-semibold hover:text-red-300 transition-colors duration-300">
-                +237 6XX XXX XXX
-              </a>
-            </div>
-
-            {/* Newsletter */}
-            <div className="text-center md:text-right">
-              <h3 className="text-xl font-bold text-white mb-4">Stay Updated</h3>
-              <p className="text-slate-300 mb-4">Get the latest AI insights and updates</p>
-              <div className="flex max-w-sm mx-auto md:ml-auto">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-1 px-4 py-2 bg-white/5 border border-white/20 rounded-l-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-r-xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-300">
-                  <Send className="w-5 h-5" />
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                <button className="bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] hover:from-[#5a6ba3] hover:to-[#7a8fc9] text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-[#6b7db8]/25 hover:shadow-[#6b7db8]/40 flex items-center justify-center">
+                  <SendIcon />
+                  <span className="ml-2">Get Started Today</span>
+                </button>
+                
+                <button className="border-2 border-[#6b7db8]/50 hover:border-[#6b7db8] text-white font-semibold py-4 px-8 rounded-xl hover:bg-[#6b7db8]/10 transition-all duration-300 backdrop-blur-sm flex items-center justify-center">
+                  <ClockIcon />
+                  <span className="ml-2">Schedule Consultation</span>
                 </button>
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] bg-clip-text text-transparent mb-2">500+</div>
+                  <div className="text-gray-400">AI Projects Delivered</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-[#8a9fd9] to-[#b3c0de] bg-clip-text text-transparent mb-2">50+</div>
+                  <div className="text-gray-400">African Companies</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-[#b3c0de] to-[#6b7db8] bg-clip-text text-transparent mb-2">99%</div>
+                  <div className="text-gray-400">Client Satisfaction</div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
+      {/* CSS pour les effets personnalisés */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg); 
+            opacity: 0.4;
+          }
+          50% { 
+            transform: translateY(-20px) rotate(180deg); 
+            opacity: 0.8;
+          }
+        }
+        
+        .animate-float {
+          animation: float 15s ease-in-out infinite;
+        }
+        
+        .bg-gradient-radial {
+          background: radial-gradient(circle, var(--tw-gradient-stops));
+        }
+      `}</style>
     </div>
   );
 }
