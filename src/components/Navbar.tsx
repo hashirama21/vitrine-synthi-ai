@@ -681,7 +681,7 @@ export const Navbar = () => {
 
             {/* CTA Button - Desktop */}
             <Link
-              href="/contact"
+              href="/signin"
               className="
                 nav-cta hidden lg:flex items-center justify-center
                 bg-blue-600 hover:bg-blue-700
