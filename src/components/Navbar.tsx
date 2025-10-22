@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { gsap } from 'gsap';
-import React from 'react';
 import {
   Eye,
   Brain,
@@ -193,7 +191,6 @@ export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const servicesDropdownRef = useRef<HTMLDivElement>(null);
@@ -223,7 +220,6 @@ export const Navbar = () => {
     };
 
     window.addEventListener('scroll', throttledScroll, { passive: true });
-    setIsLoaded(true);
 
     return () => {
       window.removeEventListener('scroll', throttledScroll);
@@ -231,33 +227,26 @@ export const Navbar = () => {
   }, [handleScroll]);
 
   // Handle dropdown hover
-  const handleDropdownEnter = (type: 'solutions' | 'services') => {
-    if (type === 'solutions') {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      setSolutionsDropdownOpen(true);
-      setServicesDropdownOpen(false);
-    } else {
-      if (servicesTimeoutRef.current) {
-        clearTimeout(servicesTimeoutRef.current);
-      }
-      setServicesDropdownOpen(true);
-      setSolutionsDropdownOpen(false);
-    }
-  };
+  const handleDropdownEnter = useCallback((type: 'solutions' | 'services') => {
+    const timeoutToRef = type === 'solutions' ? timeoutRef : servicesTimeoutRef;
+    const setDropdownOpen = type === 'solutions' ? setSolutionsDropdownOpen : setServicesDropdownOpen;
+    const setOtherDropdownOpen = type === 'solutions' ? setServicesDropdownOpen : setSolutionsDropdownOpen;
 
-  const handleDropdownLeave = (type: 'solutions' | 'services') => {
-    if (type === 'solutions') {
-      timeoutRef.current = setTimeout(() => {
-        setSolutionsDropdownOpen(false);
-      }, 150);
-    } else {
-      servicesTimeoutRef.current = setTimeout(() => {
-        setServicesDropdownOpen(false);
-      }, 150);
+    if (timeoutToRef.current) {
+      clearTimeout(timeoutToRef.current);
     }
-  };
+    setDropdownOpen(true);
+    setOtherDropdownOpen(false);
+  }, []);
+
+  const handleDropdownLeave = useCallback((type: 'solutions' | 'services') => {
+    const timeoutToRef = type === 'solutions' ? timeoutRef : servicesTimeoutRef;
+    const setDropdownOpen = type === 'solutions' ? setSolutionsDropdownOpen : setServicesDropdownOpen;
+
+    timeoutToRef.current = setTimeout(() => {
+      setDropdownOpen(false);
+    }, 150);
+  }, []);
 
   // Click outside to close dropdown
   useEffect(() => {
@@ -282,94 +271,7 @@ export const Navbar = () => {
     };
   }, []);
 
-  // GSAP Animation
-  useEffect(() => {
-    if (isLoaded) {
-      gsap.fromTo('.nav-item',
-        {
-          opacity: 0,
-          y: -20
-        },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.1,
-          duration: 0.8,
-          ease: 'power3.out',
-          delay: 0.3
-        }
-      );
 
-      gsap.fromTo('.nav-logo',
-        {
-          opacity: 0,
-          x: -30
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          delay: 0.1
-        }
-      );
-
-      gsap.fromTo('.nav-cta',
-        {
-          opacity: 0,
-          scale: 0.9
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: 'back.out(1.7)',
-          delay: 0.6
-        }
-      );
-    }
-  }, [isLoaded]);
-
-  // Dropdown animation
-  useEffect(() => {
-    if (solutionsDropdownOpen) {
-      gsap.fromTo('.solutions-dropdown-item',
-        {
-          opacity: 0,
-          y: 20,
-          scale: 0.95
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.05,
-          duration: 0.4,
-          ease: 'power2.out'
-        }
-      );
-    }
-  }, [solutionsDropdownOpen]);
-
-  useEffect(() => {
-    if (servicesDropdownOpen) {
-      gsap.fromTo('.services-dropdown-item',
-        {
-          opacity: 0,
-          y: 20,
-          scale: 0.95
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.05,
-          duration: 0.4,
-          ease: 'power2.out'
-        }
-      );
-    }
-  }, [servicesDropdownOpen]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -398,24 +300,24 @@ export const Navbar = () => {
     return pathname.startsWith(href);
   };
 
-  const getServiceCategoryColor = (category: string) => {
-    switch (category) {
-      case 'development': return 'bg-blue-500/10 text-blue-400';
-      case 'consulting': return 'bg-green-500/10 text-green-400';
-      case 'infrastructure': return 'bg-purple-500/10 text-purple-400';
-      case 'training': return 'bg-orange-500/10 text-orange-400';
-      default: return 'bg-gray-500/10 text-gray-400';
-    }
-  };
-
   const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'ai': return 'bg-blue-500/10 text-blue-400';
-      case 'vision': return 'bg-purple-500/10 text-purple-400';
-      case 'robotics': return 'bg-green-500/10 text-green-400';
-      case 'advisory': return 'bg-orange-500/10 text-orange-400';
-      default: return 'bg-gray-500/10 text-gray-400';
-    }
+    const colorMap: Record<string, string> = {
+      development: 'bg-blue-500/10 text-blue-400',
+      consulting: 'bg-green-500/10 text-green-400',
+      infrastructure: 'bg-purple-500/10 text-purple-400',
+      training: 'bg-orange-500/10 text-orange-400',
+      ai: 'bg-blue-500/10 text-blue-400',
+      vision: 'bg-purple-500/10 text-purple-400',
+      robotics: 'bg-green-500/10 text-green-400',
+      advisory: 'bg-orange-500/10 text-orange-400',
+      agriculture: 'bg-green-500/10 text-green-400',
+      'food-delivery': 'bg-orange-500/10 text-orange-400',
+      IDP: 'bg-blue-500/10 text-blue-400',
+      'digital-transformation': 'bg-purple-500/10 text-purple-400',
+      healthcare: 'bg-teal-500/10 text-teal-400',
+      education: 'bg-yellow-500/10 text-yellow-400'
+    };
+    return colorMap[category] || 'bg-gray-500/10 text-gray-400';
   };
 
   return (
@@ -423,7 +325,7 @@ export const Navbar = () => {
       <nav
         className={`
           fixed top-0 left-0 right-0 z-50 
-          transition-all duration-500 ease-out
+          transition-all duration-300 ease-out
           ${isScrolled
             ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-blue-500/10 py-2 sm:py-3'
             : 'bg-transparent py-4 sm:py-6'
@@ -468,7 +370,7 @@ export const Navbar = () => {
                     <button
                       className={`
                         nav-item relative px-4 py-2 rounded-lg font-medium text-sm xl:text-base
-                        transition-all duration-300 group flex items-center space-x-1
+                        transition-all duration-200 group flex items-center space-x-1
                         ${isActiveLink(href)
                           ? 'text-blue-400 bg-blue-500/10'
                           : 'text-slate-200 hover:text-white hover:bg-white/5'
@@ -492,7 +394,7 @@ export const Navbar = () => {
                       <span
                         className={`
                           absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400
-                          transition-all duration-300 -translate-x-1/2
+                          transition-all duration-200 -translate-x-1/2
                           ${isActiveLink(href) ? 'w-3/4' : 'w-0 group-hover:w-1/2'}
                         `}
                       />
@@ -502,7 +404,7 @@ export const Navbar = () => {
                       href={href}
                       className={`
                         nav-item relative px-4 py-2 rounded-lg font-medium text-sm xl:text-base
-                        transition-all duration-300 group
+                        transition-all duration-200 group
                         ${isActiveLink(href)
                           ? 'text-blue-400 bg-blue-500/10'
                           : 'text-slate-200 hover:text-white hover:bg-white/5'
@@ -514,7 +416,7 @@ export const Navbar = () => {
                       <span
                         className={`
                           absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400
-                          transition-all duration-300 -translate-x-1/2
+                          transition-all duration-200 -translate-x-1/2
                           ${isActiveLink(href) ? 'w-3/4' : 'w-0 group-hover:w-1/2'}
                         `}
                       />
@@ -526,7 +428,7 @@ export const Navbar = () => {
                     <div
                       className={`
                         absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[800px]
-                        transition-all duration-300 origin-top
+                        transition-all duration-200 origin-top
                         ${servicesDropdownOpen
                           ? 'opacity-100 visible scale-100'
                           : 'opacity-0 invisible scale-95'
@@ -546,14 +448,14 @@ export const Navbar = () => {
                               <Link
                                 key={service.href}
                                 href={service.href}
-                                className="services-dropdown-item group p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:bg-slate-800/50"
+                                className="group p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:bg-slate-800/50"
                                 onClick={() => setServicesDropdownOpen(false)}
                               >
                                 <div className="flex items-start space-x-3">
                                   <div className={`
                                     flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r ${service.gradient}
                                     flex items-center justify-center text-white
-                                    group-hover:scale-110 transition-transform duration-300
+                                    transition-transform duration-200
                                   `}>
                                     <IconComponent className="w-5 h-5" />
                                   </div>
@@ -564,7 +466,7 @@ export const Navbar = () => {
                                       </h4>
                                       <span className={`
                                         px-2 py-1 rounded-full text-xs font-medium
-                                        ${getServiceCategoryColor(service.category)}
+                                        ${getCategoryColor(service.category)}
                                       `}>
                                         {service.category.toUpperCase()}
                                       </span>
@@ -598,7 +500,7 @@ export const Navbar = () => {
                     <div
                       className={`
                         absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[800px]
-                        transition-all duration-300 origin-top
+                        transition-all duration-200 origin-top
                         ${solutionsDropdownOpen
                           ? 'opacity-100 visible scale-100'
                           : 'opacity-0 invisible scale-95'
@@ -620,14 +522,14 @@ export const Navbar = () => {
                               <Link
                                 key={solution.href}
                                 href={solution.href}
-                                className="solutions-dropdown-item group p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:bg-slate-800/50"
+                                className="group p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-200 hover:bg-slate-800/50"
                                 onClick={() => setSolutionsDropdownOpen(false)}
                               >
                                 <div className="flex items-start space-x-3">
                                   <div className={`
             flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r ${solution.gradient}
             flex items-center justify-center text-white
-            group-hover:scale-110 transition-transform duration-300
+            transition-transform duration-200
           `}>
                                     <IconComponent className="w-5 h-5" />
                                   </div>
@@ -681,7 +583,7 @@ export const Navbar = () => {
 
             {/* CTA Button - Desktop */}
             <Link
-              href="/signin"
+              href="/contact"
               className="
                 nav-cta hidden lg:flex items-center justify-center
                 bg-blue-600 hover:bg-blue-700
@@ -768,7 +670,7 @@ export const Navbar = () => {
                       <button
                         className={`
                           w-full text-left px-6 py-4 rounded-xl font-medium text-lg
-                          transition-all duration-300 transform flex items-center justify-between
+                          transition-all duration-200 transform flex items-center justify-between
                           ${isActiveLink(href)
                             ? 'text-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/20'
                             : 'text-slate-200 hover:text-white hover:bg-white/10'
@@ -864,7 +766,7 @@ export const Navbar = () => {
                       href={href}
                       className={`
                         block px-6 py-4 rounded-xl font-medium text-lg
-                        transition-all duration-300 transform
+                        transition-all duration-200 transform
                         ${isActiveLink(href)
                           ? 'text-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/20'
                           : 'text-slate-200 hover:text-white hover:bg-white/10'
@@ -872,7 +774,7 @@ export const Navbar = () => {
                         ${mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
                       `}
                       style={{
-                        transitionDelay: mobileMenuOpen ? `${index * 100 + 200}ms` : '0ms'
+                        transitionDelay: mobileMenuOpen ? `${index * 50 + 100}ms` : '0ms'
                       }}
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -896,7 +798,7 @@ export const Navbar = () => {
                 ${mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
               `}
               style={{
-                transitionDelay: mobileMenuOpen ? '700ms' : '0ms'
+                transitionDelay: mobileMenuOpen ? '400ms' : '0ms'
               }}
               onClick={() => setMobileMenuOpen(false)}
             >

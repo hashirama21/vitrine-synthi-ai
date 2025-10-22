@@ -18,11 +18,8 @@ export default function Home() {
       <Features />
       <CustomAssetsSection /> 
       <Services />
-      <ExpertiseDomainsSection />
-      <SolutionsShowcaseSection />
       <TeamSection />
       <BlogSection />
-      {/*<Footer/> */}
     </main>
   );
 }

@@ -3,12 +3,15 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useRouter } from 'next/navigation'
 
 export default function NavigationMenuSection() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
+
+  const router = useRouter()
   // Navigation menu items data avec sous-menus
   const navItems = [
     { 

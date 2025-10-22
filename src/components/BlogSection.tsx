@@ -3,8 +3,6 @@
 import { Calendar, Clock, ChevronRight } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-
-
 import React from "react";
 import { CardContent } from "./ui/card";
 
