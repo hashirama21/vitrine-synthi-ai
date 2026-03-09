@@ -6,6 +6,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --text-muted: #9ca3af;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,8 +16,6 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
-
 
 @layer base {
   :root {
@@ -72,15 +71,22 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
-
-
-
-@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+  .bg-300\% {
+    background-size: 300% 300%;
+  }
+  .bg-400\% {
+    background-size: 400% 400%;
   }
 }

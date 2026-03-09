@@ -32,43 +32,43 @@ const Footer: React.FC = () => {
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="bg-[#161a36] p-3 rounded-lg hover:bg-[#1e2347] transition-all duration-300 group"
-                aria-label="Suivez-nous sur Twitter"
+                aria-label="Follow us on Twitter"
               >
                 <FaTwitter className="text-gray-400 group-hover:text-blue-400 transition-colors duration-300 w-4 h-4" />
               </a>
-              <a 
-                href="https://www.instagram.com/synthiai4/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.instagram.com/synthiai4/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#161a36] p-3 rounded-lg hover:bg-[#1e2347] transition-all duration-300 group"
-                aria-label="Suivez-nous sur Instagram"
+                aria-label="Follow us on Instagram"
               >
                 <FaInstagram className="text-gray-400 group-hover:text-pink-400 transition-colors duration-300 w-4 h-4" />
               </a>
-              <a 
-                href="https://www.linkedin.com/company/synthi-ai/posts/?feedView=all" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.linkedin.com/company/synthi-ai/posts/?feedView=all"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#161a36] p-3 rounded-lg hover:bg-[#1e2347] transition-all duration-300 group"
-                aria-label="Suivez-nous sur LinkedIn"
+                aria-label="Follow us on LinkedIn"
               >
                 <FaLinkedin className="text-gray-400 group-hover:text-blue-500 transition-colors duration-300 w-4 h-4" />
               </a>
-              <a 
-                href="https://www.youtube.com/@SYNTHIAI-y2o" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.youtube.com/@SYNTHIAI-y2o"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#161a36] p-3 rounded-lg hover:bg-[#1e2347] transition-all duration-300 group"
-                aria-label="Abonnez-vous à notre chaîne YouTube"
+                aria-label="Subscribe to our YouTube channel"
               >
                 <FaYoutube className="text-gray-400 group-hover:text-red-500 transition-colors duration-300 w-4 h-4" />
               </a>
-              <a 
-                href="https://www.tiktok.com/@synthi_ai" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.tiktok.com/@synthi_ai"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#161a36] p-3 rounded-lg hover:bg-[#1e2347] transition-all duration-300 group"
-                aria-label="Suivez-nous sur TikTok"
+                aria-label="Follow us on TikTok"
               >
                 <FaTiktok className="text-gray-400 group-hover:text-white transition-colors duration-300 w-4 h-4" />
               </a>

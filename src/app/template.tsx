@@ -20,9 +20,9 @@ export default function Template({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">
+      <div className="min-h-screen">
         {children}
-      </main>
+      </div>
       <Footer />
     </>
   )

@@ -522,40 +522,6 @@ export default function PricingSection() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Bottom CTA Section
-        <div ref={ctaRef} className="text-center mt-16 lg:mt-20">
-          <div className="bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-[#6b7db8]/20 rounded-2xl p-8 lg:p-12 max-w-4xl mx-auto">
-            <h3 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-[#ebf1ff] to-[#b3c0de] bg-clip-text text-transparent mb-4">
-              Need a Custom Solution?
-            </h3>
-            <p className="text-[#6b6b6b] text-lg mb-8 max-w-2xl mx-auto">
-              Every business is unique. Let&apos;s discuss how we can create a tailored AI solution 
-              that perfectly fits your specific requirements and goals.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                className="bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] hover:from-[#5a6ba3] hover:to-[#7a8fc9] text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:shadow-[#6b7db8]/30 transition-all duration-300"
-                asChild
-              >
-                <a href="/contact">
-                  <Users className="w-4 h-4 mr-2" />
-                  Schedule Consultation
-                </a>
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-[#6b7db8]/30 text-[#6b7db8] hover:bg-[#6b7db8]/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300"
-                asChild
-              >
-                <a href="/case-studies">
-                  <Target className="w-4 h-4 mr-2" />
-                  View Case Studies
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>  */}
       </div>
 
       <style jsx>{`
