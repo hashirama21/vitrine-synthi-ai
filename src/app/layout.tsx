@@ -60,9 +60,6 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   alternates: {
     canonical: 'https://synthi-ai.com',
-    languages: {
-      'en-US': 'https://synthi-ai.com/en',
-    },
   },
   category: 'technology',
 };
@@ -94,43 +91,27 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebApplication",
+              "@type": "Organization",
               "name": "Synthi AI",
               "description": "AI-powered solutions to drive growth and efficiency for businesses across sectors",
               "url": "https://synthi-ai.com",
               "logo": "https://synthi-ai.com/logo.png",
-              "applicationCategory": "BusinessApplication",
-              "operatingSystem": "All",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "US",
-              },
-              "telephone": "+1-800-SYNTHI",
-              "email": "contact@synthi-ai.com",
-              "offers": {
-                "@type": "Offer",
-                "description": "AI solutions for business",
-                "price": "0",
-                "priceCurrency": "USD",
-                "availability": "https://schema.org/InStock"
-              },
-              "featureList": [
-                "Advanced machine learning models",
-                "Predictive analytics",
-                "Natural language processing",
-                "Computer vision",
-                "Data security and privacy",
-                "Scalable cloud infrastructure"
+              "address": [
+                {
+                  "@type": "PostalAddress",
+                  "addressCountry": "CM",
+                },
+                {
+                  "@type": "PostalAddress",
+                  "addressCountry": "US",
+                }
               ],
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "5.0",
-                "reviewCount": "2500"
-              },
+              "email": "contact@synthi-ai.com",
               "sameAs": [
-                "https://facebook.com/synthiaiofficial",
-                "https://twitter.com/synthiaiofficial",
-                "https://linkedin.com/company/synthi-ai"
+                "https://www.linkedin.com/company/synthi-ai/posts/?feedView=all",
+                "https://www.youtube.com/@SYNTHIAI-y2o",
+                "https://www.instagram.com/synthiai4/",
+                "https://www.tiktok.com/@synthi_ai"
               ]
             })
           }}

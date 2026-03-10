@@ -641,15 +641,17 @@ export default function SolutionsPortfolio() {
             transition={{ duration: 0.4, delay: 0.5 }}
             className="mt-8"
           >
+            {/**
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-brand/20 hover:shadow-brand/30 hover:scale-[1.03]"
             >
               Get in touch
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </Link>  */}
           </motion.div>
-          <motion.div
+        {/**
+  <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.7 }}
@@ -667,6 +669,7 @@ export default function SolutionsPortfolio() {
               </div>
             ))}
           </motion.div>
+         */}
         </div>
       </section>
 
