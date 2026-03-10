@@ -7,6 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/signin', '/signup', '/api/'],
     },
-    sitemap: 'https://synthi-ai.com/sitemap.xml',
+    sitemap: [
+      'https://synthi-ai.com/sitemap.xml',
+      'https://www.synthi-ai.com/sitemap.xml',
+    ],
   };
 }

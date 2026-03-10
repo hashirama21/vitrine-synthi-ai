@@ -213,14 +213,14 @@ export default function ProfessionalSectionsComplete() {
                         </p>
                     </div>
                     <div className="mt-10 lg:mt-0 lg:pl-16">
-                        <Link
-                            href="/contact"
+                        <a
+                            href="mailto:contact@synthi-ai.com"
                             className="inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-base font-semibold text-brand hover:text-brand-dark transition-colors duration-200 shadow-lg"
                         >
                             <Send className="h-5 w-5" />
                             Contact Us
                             <ArrowRight className="h-5 w-5" />
-                        </Link>
+                        </a>
                     </div>
                 </div>
 

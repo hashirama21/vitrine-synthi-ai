@@ -10,7 +10,7 @@ const teamMembers = [
     id: 1,
     slug: 'adam-dongmo',
     name: 'Vincess Dongmo',
-    role: 'Founder & CEO',
+    role: 'Founder & CTO',
     image: '/founder/image1.jpeg',
     bio: 'Visionary leader driving AI innovation across Africa with 5+ years of experience in machine learning and robotics. Vincess has led the development of cutting-edge AI solutions for healthcare, agriculture, and smart city applications across the continent.',
   },
@@ -24,20 +24,29 @@ const teamMembers = [
   },
   {
     id: 3,
-    slug: 'michael-johnson',
-    name: 'Michael Johnson',
-    role: 'Robotics Engineer',
-    image: '/founder/woman.jpeg',
-    bio: 'Robotics specialist focused on autonomous systems and human-robot interaction design. Michael brings deep expertise in embedded systems and real-time computer vision applications.',
-  },
-  {
-    id: 4,
     slug: 'sarah-chen',
     name: 'Gaëlle Tamho',
     role: 'UI/UX Designer',
     image: '/founder/gael.jpeg',
     bio: 'BSc in Software Engineering with expertise in UI/UX design and user-centered development. Gaëlle crafts intuitive interfaces that bridge the gap between complex AI technology and everyday users.',
   },
+  {
+    id: 4,
+    slug: 'nkemi-steve',
+    name: 'Kemi Steve Christian',
+    role: 'Head of Design & Founding Engineer',
+    image: '/founder/woman.jpeg',
+    bio: 'I\'m a proactive and creative UX/UI designer, graphics designer',
+  },
+  {
+    id: 5,
+    slug: 'michael-johnson',
+    name: 'Michael Johnson',
+    role: 'Robotics Engineer',
+    image: '/founder/woman.jpeg',
+    bio: 'Robotics specialist focused on autonomous systems and human-robot interaction design. Michael brings deep expertise in embedded systems and real-time computer vision applications.',
+  },
+   
 ];
 
 export default function TeamSection() {

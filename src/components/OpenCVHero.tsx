@@ -9,7 +9,7 @@ const partnerLogos = [
   { src: '/images/ndinga-eats.png', alt: 'Ndinga Eats' },
   { src: '/images/ubora.png', alt: 'Ubora' },
   { src: '/images/founders_hub.png', alt: 'Founders Hub' },
-  { src: '/images/verox.webp', alt: 'Veroxfloor' },
+  { src: '/images/SurveyMonkey.jpg', alt: 'SurveyMonkey' },
 ];
 
 export default function OpenCVHero() {

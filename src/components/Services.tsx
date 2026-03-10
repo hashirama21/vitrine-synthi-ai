@@ -28,7 +28,7 @@ const services = [
       'Academic publications and datasets',
     ],
     cta: 'Start Research',
-    link: '/contact?plan=labs',
+    link: 'mailto:contact@synthi-ai.com?subject=Inquiry%20-%20Synthi%20AI%20Labs',
   },
   {
     id: 'solutions',
@@ -45,7 +45,7 @@ const services = [
       'Industry: Process automation and supply chain',
     ],
     cta: 'Get Solution',
-    link: '/contact?plan=solutions',
+    link: 'mailto:contact@synthi-ai.com?subject=Inquiry%20-%20Synthi%20AI%20Solutions',
   },
   {
     id: 'academy',
@@ -62,7 +62,7 @@ const services = [
       'Career placement assistance',
     ],
     cta: 'Start Learning',
-    link: '/contact?plan=academy',
+    link: 'mailto:contact@synthi-ai.com?subject=Inquiry%20-%20Synthi%20AI%20Academy',
   },
   {
     id: 'neuralynx',
@@ -80,7 +80,7 @@ const services = [
       'Executive training and change management',
     ],
     cta: 'Get Consulting',
-    link: '/contact?plan=neuralynx',
+    link: 'mailto:contact@synthi-ai.com?subject=Inquiry%20-%20NeuroLynx%20Advisor',
   },
 ];
 
@@ -93,7 +93,7 @@ export default function Services() {
       ([entry]) => {
         if (entry.isIntersecting) setIsVisible(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.05 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -101,176 +101,157 @@ export default function Services() {
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden">
-      {/* ── Video / Animated Hero Banner ── */}
-      <div className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Background video — abstract tech/data visualization */}
-        <div className="absolute inset-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80"
-            className="w-full h-full object-cover"
-          >
-            <source
-              src="https://cdn.coverr.co/videos/coverr-blue-particles-floating/1080p.mp4"
-              type="video/mp4"
-            />
-          </video>
-        </div>
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black" />
-
-        {/* Animated grid pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.04]">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="services-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#services-grid)" />
-          </svg>
-        </div>
-
-        {/* Floating orbs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.div
-            className="absolute w-[400px] h-[400px] rounded-full blur-[120px] bg-[#6b7db8]/15"
-            animate={{ x: [0, 60, 0], y: [0, -40, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ top: '10%', left: '10%' }}
+      {/* ── Full video background ── */}
+      <div className="absolute inset-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80"
+          className="w-full h-full object-cover"
+        >
+          <source
+            src="https://cdn.coverr.co/videos/coverr-blue-particles-floating/1080p.mp4"
+            type="video/mp4"
           />
-          <motion.div
-            className="absolute w-[300px] h-[300px] rounded-full blur-[100px] bg-[#8a9fd9]/10"
-            animate={{ x: [0, -50, 0], y: [0, 50, 0] }}
-            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ bottom: '10%', right: '15%' }}
-          />
-        </div>
-
-        {/* Header content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-32">
-          <motion.div
-            className="text-[#6b7db8] text-xs uppercase tracking-[0.3em] font-semibold mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-          >
-            Flexible Solutions
-          </motion.div>
-
-          <div className="overflow-hidden mb-6">
-            <motion.h2
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1]"
-              initial={{ y: '100%', opacity: 0 }}
-              animate={isVisible ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              Choose the{' '}
-              <span className="bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] bg-clip-text text-transparent">
-                right fit
-              </span>
-              <br />
-              for your business
-            </motion.h2>
-          </div>
-
-          <motion.p
-            className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            From cutting-edge research to practical business solutions, comprehensive
-            education, and strategic AI consulting — we provide AI services tailored to
-            drive innovation across Africa and beyond.
-          </motion.p>
-        </div>
+        </video>
       </div>
 
-      {/* ── Service Cards ── */}
-      <div className="relative bg-black py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {services.map((service, index) => (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.4 + index * 0.15 }}
-                className="group relative"
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]" />
+
+      {/* Animated grid pattern */}
+      <div className="absolute inset-0 opacity-[0.03]">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="services-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#services-grid)" />
+        </svg>
+      </div>
+
+      {/* Floating orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          className="absolute w-[400px] h-[400px] rounded-full blur-[120px] bg-[#6b7db8]/12"
+          animate={{ x: [0, 60, 0], y: [0, -40, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ top: '10%', left: '5%' }}
+        />
+        <motion.div
+          className="absolute w-[300px] h-[300px] rounded-full blur-[100px] bg-[#8a9fd9]/8"
+          animate={{ x: [0, -50, 0], y: [0, 50, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ bottom: '15%', right: '10%' }}
+        />
+      </div>
+
+      {/* ── Content over video ── */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-16 lg:mb-20"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+        >
+          <p className="text-[#6b7db8] text-xs uppercase tracking-[0.3em] font-semibold mb-5">
+            Flexible Solutions
+          </p>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-6">
+            Choose the{' '}
+            <span className="bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] bg-clip-text text-transparent">
+              right fit
+            </span>
+            <br />
+            for your business
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+            From cutting-edge research to practical business solutions, comprehensive
+            education, and strategic AI consulting.
+          </p>
+        </motion.div>
+
+        {/* Cards grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          {services.map((service, index) => (
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 40 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 + index * 0.12 }}
+              className="group relative"
+            >
+              <div
+                className={`relative h-full p-6 rounded-2xl border backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 ${
+                  service.popular
+                    ? 'bg-white/[0.07] border-[#6b7db8]/40 shadow-lg shadow-[#6b7db8]/10'
+                    : 'bg-white/[0.04] border-white/[0.08] hover:border-[#6b7db8]/30'
+                } hover:shadow-xl hover:shadow-[#6b7db8]/15 hover:bg-white/[0.08]`}
               >
-                <div
-                  className={`relative h-full p-6 rounded-2xl border backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 ${
-                    service.popular
-                      ? 'bg-gradient-to-b from-gray-900/80 to-gray-900/60 border-[#6b7db8]/40 shadow-lg shadow-[#6b7db8]/10'
-                      : 'bg-gray-900/50 border-[#6b7db8]/15 hover:border-[#6b7db8]/40'
-                  } hover:shadow-xl hover:shadow-[#6b7db8]/15`}
-                >
-                  {/* Badge */}
-                  {(service.popular || service.isNew) && (
-                    <div className="absolute -top-3 left-6">
-                      <span
-                        className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${
-                          service.isNew
-                            ? 'bg-gradient-to-r from-emerald-500 to-cyan-500'
-                            : 'bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9]'
-                        }`}
-                      >
-                        {service.isNew ? 'New' : 'Popular'}
+                {/* Badge */}
+                {(service.popular || service.isNew) && (
+                  <div className="absolute -top-3 left-6">
+                    <span
+                      className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${
+                        service.isNew
+                          ? 'bg-gradient-to-r from-emerald-500 to-cyan-500'
+                          : 'bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9]'
+                      }`}
+                    >
+                      {service.isNew ? 'New' : 'Popular'}
+                    </span>
+                  </div>
+                )}
+
+                {/* Icon */}
+                <div className="w-12 h-12 bg-[#6b7db8]/15 rounded-xl flex items-center justify-center text-[#6b7db8] mb-5 group-hover:bg-[#6b7db8]/25 transition-colors duration-300">
+                  {service.icon}
+                </div>
+
+                {/* Content */}
+                <h3 className="text-lg font-bold text-white mb-1">{service.name}</h3>
+                <p className="text-[#6b7db8] text-xs font-semibold mb-3">
+                  {service.tagline}
+                </p>
+                <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                  {service.description}
+                </p>
+
+                {/* Features */}
+                <div className="space-y-2.5 mb-6">
+                  {service.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#6b7db8]/15 flex items-center justify-center mt-0.5">
+                        <Check className="w-2.5 h-2.5 text-[#6b7db8]" />
+                      </div>
+                      <span className="text-gray-400 text-xs leading-relaxed">
+                        {feature}
                       </span>
                     </div>
-                  )}
-
-                  {/* Icon */}
-                  <div className="w-12 h-12 bg-[#6b7db8]/15 rounded-xl flex items-center justify-center text-[#6b7db8] mb-5 group-hover:bg-[#6b7db8]/25 transition-colors duration-300">
-                    {service.icon}
-                  </div>
-
-                  {/* Content */}
-                  <h3 className="text-lg font-bold text-white mb-1">{service.name}</h3>
-                  <p className="text-[#6b7db8] text-xs font-semibold mb-3">
-                    {service.tagline}
-                  </p>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-6">
-                    {service.description}
-                  </p>
-
-                  {/* Features */}
-                  <div className="space-y-2.5 mb-6">
-                    {service.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#6b7db8]/15 flex items-center justify-center mt-0.5">
-                          <Check className="w-2.5 h-2.5 text-[#6b7db8]" />
-                        </div>
-                        <span className="text-gray-400 text-xs leading-relaxed">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <Link
-                    href={service.link}
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                      service.popular
-                        ? 'bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] text-white hover:shadow-lg hover:shadow-[#6b7db8]/30'
-                        : service.isNew
-                          ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-emerald-500/30'
-                          : 'bg-[#6b7db8]/15 text-[#6b7db8] hover:bg-[#6b7db8] hover:text-white border border-[#6b7db8]/20 hover:border-[#6b7db8]'
-                    }`}
-                  >
-                    <span>{service.cta}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  ))}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* CTA */}
+                <Link
+                  href={service.link}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                    service.popular
+                      ? 'bg-gradient-to-r from-[#6b7db8] to-[#8a9fd9] text-white hover:shadow-lg hover:shadow-[#6b7db8]/30'
+                      : service.isNew
+                        ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-emerald-500/30'
+                        : 'bg-white/[0.06] text-[#6b7db8] hover:bg-[#6b7db8] hover:text-white border border-white/[0.08] hover:border-[#6b7db8]'
+                  }`}
+                >
+                  <span>{service.cta}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

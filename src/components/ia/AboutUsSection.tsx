@@ -84,12 +84,12 @@ export default function AboutUsSection() {
                             strategic challenges of businesses and institutions.
                         </p>
                         <div className="mt-8 flex flex-wrap gap-4">
-                            <Link
-                                href="/contact"
+                            <a
+                                href="mailto:contact@synthi-ai.com"
                                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-base font-semibold text-white hover:bg-brand-dark transition-colors duration-200"
                             >
                                 Get in touch
-                            </Link>
+                            </a>
                             <Link
                                 href="#core-values"
                                 className="inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-semibold text-brand ring-1 ring-brand/30 hover:ring-brand/60 transition-all duration-200"

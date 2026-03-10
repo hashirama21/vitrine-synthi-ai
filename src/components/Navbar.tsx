@@ -5,777 +5,442 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
-  Brain,
-  ChevronDown,
   ArrowRight,
   Menu,
   X,
+  ChevronDown,
   Code,
-  Database,
+  Brain,
+  Eye,
   Shield,
-  Users,
-  Cpu,
   Cloud,
-  Target,
-  Briefcase,
-  BookOpen,
-  Globe,
+  GraduationCap,
+  Wheat,
   HeartPulse,
-  Utensils,
-  Wheat
+  Factory,
+  Truck,
+  Building2,
+  Cpu,
+  BookOpen,
+  Briefcase,
+  Users,
+  Mail,
+  FileText,
+  Scale,
 } from 'lucide-react';
 
-// Types
-interface NavItem {
-  href: string;
-  label: string;
-  hasDropdown?: boolean;
-}
+/* ─────────── Dropdown Data ─────────── */
 
-interface Service {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  category: 'development' | 'consulting' | 'infrastructure' | 'training';
-  gradient: string;
-}
-
-interface Solution {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  category: string[];
-  gradient: string;
-}
-
-const navItems: NavItem[] = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/services', label: 'Services', hasDropdown: true },
-  { href: '/solutions', label: 'Solutions', hasDropdown: true },
-  { href: '/enterprise', label: 'Enterprise' },
-  { href: '/hub', label: 'Hub' },
+const aiServicesItems = [
+  { label: 'AI Development', desc: 'Custom AI model development & integration', href: '/solutions', icon: Code },
+  { label: 'Computer Vision', desc: 'Object detection, segmentation & tracking', href: '/solutions', icon: Eye },
+  { label: 'Generative AI', desc: 'LLMs, content generation & chatbots', href: '/solutions', icon: Brain },
+  { label: 'AI Consulting', desc: 'Strategy, roadmaps & implementation', href: '/solutions', icon: Briefcase },
+  { label: 'Data Services', desc: 'Data engineering, analytics & pipelines', href: '/solutions', icon: Cpu },
+  { label: 'Cloud AI Infrastructure', desc: 'Scalable deployment & MLOps', href: '/solutions', icon: Cloud },
+  { label: 'AI Security & Ethics', desc: 'Responsible AI & compliance', href: '/solutions', icon: Shield },
+  { label: 'Training & Workshops', desc: 'Upskill your team in AI & ML', href: '/solutions', icon: GraduationCap },
 ];
 
-const services: Service[] = [
-  {
-    title: 'AI Development',
-    description: 'Custom AI model development and integration',
-    href: '/services/ai-development',
-    icon: Code,
-    category: 'development',
-    gradient: 'from-blue-500 to-indigo-500'
-  },
-  {
-    title: 'Data Science & Analytics',
-    description: 'Advanced data analysis and insights generation',
-    href: '/services/data-science',
-    icon: Database,
-    category: 'development',
-    gradient: 'from-green-500 to-teal-500'
-  },
-  {
-    title: 'AI Security & Ethics',
-    description: 'Secure and ethical AI implementation',
-    href: '/services/ai-security',
-    icon: Shield,
-    category: 'consulting',
-    gradient: 'from-red-500 to-pink-500'
-  },
-  {
-    title: 'AI Training & Workshops',
-    description: 'Comprehensive AI education and skill development',
-    href: '/services/training',
-    icon: Users,
-    category: 'training',
-    gradient: 'from-purple-500 to-violet-500'
-  },
-  {
-    title: 'Cloud AI Infrastructure',
-    description: 'Scalable cloud-based AI solutions',
-    href: '/services/cloud-infrastructure',
-    icon: Cloud,
-    category: 'infrastructure',
-    gradient: 'from-cyan-500 to-blue-500'
-  },
-  {
-    title: 'AI Performance Optimization',
-    description: 'Optimize AI models for maximum efficiency',
-    href: '/services/optimization',
-    icon: Cpu,
-    category: 'development',
-    gradient: 'from-orange-500 to-yellow-500'
-  },
-  {
-    title: 'AI Strategy Consulting',
-    description: 'Strategic planning for AI adoption',
-    href: '/services/strategy-consulting',
-    icon: Target,
-    category: 'consulting',
-    gradient: 'from-emerald-500 to-green-500'
-  },
-  {
-    title: 'Enterprise AI Solutions',
-    description: 'Large-scale AI implementation for enterprises',
-    href: '/services/enterprise',
-    icon: Briefcase,
-    category: 'consulting',
-    gradient: 'from-slate-500 to-gray-500'
-  }
+const industriesItems = [
+  { label: 'Agriculture', desc: 'Precision farming & crop monitoring', href: '/solutions', icon: Wheat },
+  { label: 'Healthcare', desc: 'Medical imaging & diagnostics', href: '/solutions', icon: HeartPulse },
+  { label: 'Manufacturing', desc: 'Quality control & process automation', href: '/solutions', icon: Factory },
+  { label: 'Logistics', desc: 'Supply chain & delivery optimization', href: '/solutions', icon: Truck },
+  { label: 'Smart City', desc: 'Traffic, energy & urban intelligence', href: '/solutions', icon: Building2 },
+  { label: 'Education', desc: 'Adaptive learning & analytics', href: '/solutions', icon: BookOpen },
 ];
 
-const solutions: Solution[] = [
-  {
-    title: 'Farm\'sToMarket',
-    description: 'A transformative digital platform revolutionizing agriculture with AI-driven crop yield prediction, computer vision for crop and livestock monitoring, optimized delivery through smart logistics, an intelligent marketplace, integrated banking, and real-time price exchange for sustainable and profitable agro-pastoral ecosystems.',
-    href: 'http://farmstomarket.synthi-ai.com/',
-    icon: Wheat,
-    category: ['agriculture'],
-    gradient: 'from-green-600 to-emerald-600'
-  },
-  {
-    title: 'Ndinga Eats',
-    description: 'A revolutionary food delivery platform connecting urban consumers with restaurants, supermarkets, and local vendors, offering geolocated delivery, flexible payments, and a digital infrastructure for inclusive economic growth in Africa.',
-    href: '/solutions/ndinga-eats',
-    icon: Utensils,
-    category: ['food-delivery'],
-    gradient: 'from-orange-600 to-red-600'
-  },
-  {
-    title: 'UBora AI',
-    description: 'An AI-driven platform optimizing resource management and decision-making in critical sectors like health and environment, leveraging advanced data analytics for predictive modeling and crisis anticipation.',
-    href: 'https://ubora-ai.synthi-ai.com',
-    icon: Brain,
-    category: ['IDP'],
-    gradient: 'from-blue-600 to-cyan-600'
-  },
-  {
-    title: 'KamerHeaven',
-    description: 'A technology ecosystem accelerating digitalization in Africa, providing localized, innovative solutions to enhance access to services in agriculture, health, and education, tailored to regional needs.',
-    href: 'https://heaven.synthi-ai.com',
-    icon: Globe,
-    category: ['digital-transformation'],
-    gradient: 'from-purple-600 to-indigo-600'
-  },
-  {
-    title: 'HealthSync AI',
-    description: 'An AI-powered medical solution enhancing healthcare delivery through predictive diagnostics, patient monitoring, and personalized treatment plans, integrating IoT and real-time analytics for improved health outcomes.',
-    href: '/solutions/healthsync-ai',
-    icon: HeartPulse,
-    category: ['ai', 'healthcare'],
-    gradient: 'from-teal-600 to-blue-600'
-  },
-  {
-    title: 'EduGrow AI',
-    description: 'An innovative educational platform leveraging AI to democratize learning, offering personalized curriculums, real-time performance analytics, and accessible digital tools for students and educators.',
-    href: '/solutions/edugrow-ai',
-    icon: BookOpen,
-    category: ['education'],
-    gradient: 'from-yellow-600 to-orange-600'
-  }
+const companyItems = [
+  { label: 'About Us', desc: 'Our mission, vision & team', href: '/about', icon: Users },
+  { label: 'Enterprise', desc: 'Solutions for large organizations', href: '/enterprise', icon: Building2 },
+  { label: 'Portfolio', desc: 'Projects & case studies', href: '/labs', icon: FileText },
+  { label: 'Blog', desc: 'Insights & technical articles', href: '/blog', icon: BookOpen },
+  { label: 'Careers', desc: 'Join our team', href: '/about', icon: Briefcase },
+  { label: 'Contact', desc: 'Get in touch with us', href: 'mailto:contact@synthi-ai.com', icon: Mail },
+  { label: 'Legal', desc: 'Privacy, terms & policies', href: '/privacy', icon: Scale },
 ];
+
+type DropdownKey = 'services' | 'industries' | 'company' | null;
+
+/* ─────────── Component ─────────── */
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
-  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<DropdownKey>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<DropdownKey>(null);
   const pathname = usePathname();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const servicesDropdownRef = useRef<HTMLDivElement>(null);
-  const servicesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
-  // Optimized scroll handler with throttling
+  /* Scroll */
   const handleScroll = useCallback(() => {
     const scrolled = window.scrollY > 20;
-    if (scrolled !== isScrolled) {
-      setIsScrolled(scrolled);
-    }
+    if (scrolled !== isScrolled) setIsScrolled(scrolled);
   }, [isScrolled]);
 
   useEffect(() => {
     let ticking = false;
-    const throttledScroll = () => {
+    const handler = () => {
       if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
+        requestAnimationFrame(() => { handleScroll(); ticking = false; });
         ticking = true;
       }
     };
-
-    window.addEventListener('scroll', throttledScroll, { passive: true });
-    return () => window.removeEventListener('scroll', throttledScroll);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
   }, [handleScroll]);
 
-  // Handle dropdown hover
-  const handleDropdownEnter = (type: 'solutions' | 'services') => {
-    if (type === 'solutions') {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      setSolutionsDropdownOpen(true);
-      setServicesDropdownOpen(false);
-    } else {
-      if (servicesTimeoutRef.current) clearTimeout(servicesTimeoutRef.current);
-      setServicesDropdownOpen(true);
-      setSolutionsDropdownOpen(false);
-    }
-  };
-
-  const handleDropdownLeave = (type: 'solutions' | 'services') => {
-    if (type === 'solutions') {
-      timeoutRef.current = setTimeout(() => setSolutionsDropdownOpen(false), 150);
-    } else {
-      servicesTimeoutRef.current = setTimeout(() => setServicesDropdownOpen(false), 150);
-    }
-  };
-
-  // Click outside to close dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setSolutionsDropdownOpen(false);
-      }
-      if (servicesDropdownRef.current && !servicesDropdownRef.current.contains(event.target as Node)) {
-        setServicesDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (servicesTimeoutRef.current) clearTimeout(servicesTimeoutRef.current);
-    };
-  }, []);
-
-  // Close mobile menu when route changes
+  /* Route change → close everything */
   useEffect(() => {
     setMobileMenuOpen(false);
-    setSolutionsDropdownOpen(false);
-    setServicesDropdownOpen(false);
+    setActiveDropdown(null);
+    setMobileExpanded(null);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
+  /* Body scroll lock */
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : 'unset';
     return () => { document.body.style.overflow = 'unset'; };
   }, [mobileMenuOpen]);
 
-  const isActiveLink = (href: string) => {
+  /* Click outside */
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleEnter = (key: DropdownKey) => {
+    if (closeTimeout.current) clearTimeout(closeTimeout.current);
+    setActiveDropdown(key);
+  };
+  const handleLeave = () => {
+    closeTimeout.current = setTimeout(() => setActiveDropdown(null), 150);
+  };
+
+  const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
 
-  const getServiceCategoryColor = (category: string) => {
-    switch (category) {
-      case 'development': return 'bg-blue-500/10 text-blue-400';
-      case 'consulting': return 'bg-green-500/10 text-green-400';
-      case 'infrastructure': return 'bg-purple-500/10 text-purple-400';
-      case 'training': return 'bg-orange-500/10 text-orange-400';
-      default: return 'bg-gray-500/10 text-gray-400';
-    }
-  };
+  /* ─── Mega-menu panel ─── */
+  const renderDropdown = (
+    items: typeof aiServicesItems,
+    title: string,
+    subtitle: string,
+    viewAllHref: string,
+    viewAllLabel: string,
+  ) => (
+    <div
+      className={`
+        absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[720px]
+        transition-all duration-200 origin-top
+        ${activeDropdown ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-[0.98]'}
+      `}
+      onMouseEnter={() => { if (closeTimeout.current) clearTimeout(closeTimeout.current); }}
+      onMouseLeave={handleLeave}
+    >
+      <div className="bg-[#0c0c24]/95 backdrop-blur-2xl rounded-2xl border border-[#6b7db8]/15 shadow-2xl shadow-black/40 p-6">
+        {/* Header */}
+        <div className="mb-5 pb-4 border-b border-[#6b7db8]/10">
+          <h3 className="text-white font-semibold text-base">{title}</h3>
+          <p className="text-gray-500 text-xs mt-1">{subtitle}</p>
+        </div>
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'ai': return 'bg-blue-500/10 text-blue-400';
-      case 'vision': return 'bg-purple-500/10 text-purple-400';
-      case 'robotics': return 'bg-green-500/10 text-green-400';
-      case 'advisory': return 'bg-orange-500/10 text-orange-400';
-      default: return 'bg-gray-500/10 text-gray-400';
-    }
-  };
+        {/* Grid */}
+        <div className="grid grid-cols-2 gap-1">
+          {items.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="group/item flex items-start gap-3.5 p-3 rounded-xl hover:bg-[#6b7db8]/8 transition-colors duration-200"
+                onClick={() => setActiveDropdown(null)}
+              >
+                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-[#6b7db8]/10 flex items-center justify-center text-[#6b7db8] group-hover/item:bg-[#6b7db8]/20 transition-colors duration-200">
+                  <Icon className="w-[18px] h-[18px]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white text-sm font-medium group-hover/item:text-[#8a9fd9] transition-colors duration-200">
+                    {item.label}
+                  </p>
+                  <p className="text-gray-500 text-xs leading-relaxed mt-0.5">
+                    {item.desc}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-4 pt-4 border-t border-[#6b7db8]/10">
+          <Link
+            href={viewAllHref}
+            className="inline-flex items-center text-[#6b7db8] hover:text-[#8a9fd9] text-sm font-medium transition-colors duration-200"
+            onClick={() => setActiveDropdown(null)}
+          >
+            {viewAllLabel}
+            <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ─── Desktop nav item with dropdown ─── */
+  const NavDropdown = ({ label, dropdownKey }: { label: string; dropdownKey: DropdownKey }) => (
+    <div
+      className="relative"
+      onMouseEnter={() => handleEnter(dropdownKey)}
+      onMouseLeave={handleLeave}
+    >
+      <button
+        className={`
+          flex items-center gap-1 px-3.5 py-2 rounded-lg text-[14px] font-medium
+          transition-all duration-200
+          ${activeDropdown === dropdownKey ? 'text-white' : 'text-gray-400 hover:text-white'}
+        `}
+        onClick={() => setActiveDropdown(activeDropdown === dropdownKey ? null : dropdownKey)}
+      >
+        {label}
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === dropdownKey ? 'rotate-180' : ''}`} />
+      </button>
+
+      {dropdownKey === 'services' && activeDropdown === 'services' &&
+        renderDropdown(aiServicesItems, 'AI Services', 'Comprehensive AI & Computer Vision services', '/solutions', 'View all services')}
+      {dropdownKey === 'industries' && activeDropdown === 'industries' &&
+        renderDropdown(industriesItems, 'Industries', 'AI solutions tailored for your sector', '/solutions', 'Explore all industries')}
+      {dropdownKey === 'company' && activeDropdown === 'company' &&
+        renderDropdown(companyItems, 'Company', 'Learn more about Synthi AI', '/about', 'About Synthi AI')}
+    </div>
+  );
 
   return (
     <>
       <nav
+        ref={navRef}
         className={`
           fixed top-0 left-0 right-0 z-50
           transition-all duration-500 ease-out
           ${isScrolled
-            ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-blue-500/10 py-2 sm:py-3'
-            : 'bg-transparent py-4 sm:py-6'
+            ? 'bg-black/85 backdrop-blur-2xl border-b border-[#6b7db8]/8 py-1.5'
+            : 'bg-transparent py-3 sm:py-4'
           }
         `}
         role="navigation"
         aria-label="Main navigation"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-20 items-center justify-between">
+          <div className="flex h-14 items-center justify-between">
 
             {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center space-x-2 group"
-              aria-label="Go to homepage"
-            >
-              <div className="relative overflow-hidden rounded-lg">
-                <Image
-                  src="/logo.png"
-                  alt="Company Logo"
-                  width={140}
-                  height={50}
-                  sizes="(max-width: 640px) 120px, 140px"
-                  priority
-                  className="h-auto w-auto transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+            <Link href="/" className="flex items-center group flex-shrink-0" aria-label="Go to homepage">
+              <Image
+                src="/logo.png"
+                alt="Synthi AI"
+                width={120}
+                height={42}
+                sizes="(max-width: 640px) 100px, 120px"
+                priority
+                className="h-auto w-auto transition-opacity duration-300 group-hover:opacity-80"
+              />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
-              {navItems.map(({ href, label, hasDropdown }) => (
-                <div
-                  key={href}
-                  className="relative"
-                  ref={hasDropdown && label === 'Solutions' ? dropdownRef : hasDropdown && label === 'Services' ? servicesDropdownRef : null}
-                  onMouseEnter={hasDropdown ? () => handleDropdownEnter(label === 'Solutions' ? 'solutions' : 'services') : undefined}
-                  onMouseLeave={hasDropdown ? () => handleDropdownLeave(label === 'Solutions' ? 'solutions' : 'services') : undefined}
-                >
-                  {hasDropdown ? (
-                    <button
-                      className={`
-                        relative px-4 py-2 rounded-lg font-medium text-sm xl:text-base
-                        transition-all duration-300 group flex items-center space-x-1
-                        ${isActiveLink(href)
-                          ? 'text-blue-400 bg-blue-500/10'
-                          : 'text-slate-200 hover:text-white hover:bg-white/5'
-                        }
-                      `}
-                      onClick={() => {
-                        if (label === 'Solutions') {
-                          setSolutionsDropdownOpen(!solutionsDropdownOpen);
-                          setServicesDropdownOpen(false);
-                        } else {
-                          setServicesDropdownOpen(!servicesDropdownOpen);
-                          setSolutionsDropdownOpen(false);
-                        }
-                      }}
-                    >
-                      <span>{label}</span>
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${(label === 'Solutions' && solutionsDropdownOpen) || (label === 'Services' && servicesDropdownOpen) ? 'rotate-180' : ''
-                          }`}
-                      />
-                      <span
-                        className={`
-                          absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400
-                          transition-all duration-300 -translate-x-1/2
-                          ${isActiveLink(href) ? 'w-3/4' : 'w-0 group-hover:w-1/2'}
-                        `}
-                      />
-                    </button>
-                  ) : (
-                    <Link
-                      href={href}
-                      className={`
-                        relative px-4 py-2 rounded-lg font-medium text-sm xl:text-base
-                        transition-all duration-300 group
-                        ${isActiveLink(href)
-                          ? 'text-blue-400 bg-blue-500/10'
-                          : 'text-slate-200 hover:text-white hover:bg-white/5'
-                        }
-                      `}
-                      aria-current={isActiveLink(href) ? 'page' : undefined}
-                    >
-                      {label}
-                      <span
-                        className={`
-                          absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-400
-                          transition-all duration-300 -translate-x-1/2
-                          ${isActiveLink(href) ? 'w-3/4' : 'w-0 group-hover:w-1/2'}
-                        `}
-                      />
-                    </Link>
-                  )}
+            <div className="hidden lg:flex items-center gap-0.5">
+              <NavDropdown label="AI Services" dropdownKey="services" />
+              <NavDropdown label="Industries" dropdownKey="industries" />
 
-                  {/* Services Dropdown */}
-                  {hasDropdown && label === 'Services' && (
-                    <div
-                      className={`
-                        absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[800px]
-                        transition-all duration-300 origin-top
-                        ${servicesDropdownOpen
-                          ? 'opacity-100 visible scale-100'
-                          : 'opacity-0 invisible scale-95'
-                        }
-                      `}
-                    >
-                      <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-blue-500/20 border border-slate-700/50 p-6">
-                        <div className="mb-4">
-                          <h3 className="text-white font-semibold text-lg mb-2">Our Services</h3>
-                          <p className="text-slate-400 text-sm">Comprehensive AI services to accelerate your digital transformation</p>
-                        </div>
+              <Link
+                href="/labs"
+                className={`px-3.5 py-2 rounded-lg text-[14px] font-medium transition-all duration-200 ${
+                  isActive('/labs') ? 'text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Portfolio
+              </Link>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          {services.map((service) => {
-                            const IconComponent = service.icon;
-                            return (
-                              <Link
-                                key={service.href}
-                                href={service.href}
-                                className="group/item p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:bg-slate-800/50"
-                                onClick={() => setServicesDropdownOpen(false)}
-                              >
-                                <div className="flex items-start space-x-3">
-                                  <div className={`
-                                    flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r ${service.gradient}
-                                    flex items-center justify-center text-white
-                                    group-hover/item:scale-110 transition-transform duration-300
-                                  `}>
-                                    <IconComponent className="w-5 h-5" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                      <h4 className="text-white font-medium text-sm group-hover/item:text-blue-400 transition-colors duration-300">
-                                        {service.title}
-                                      </h4>
-                                      <span className={`
-                                        px-2 py-1 rounded-full text-xs font-medium
-                                        ${getServiceCategoryColor(service.category)}
-                                      `}>
-                                        {service.category.toUpperCase()}
-                                      </span>
-                                    </div>
-                                    <p className="text-slate-400 text-xs line-clamp-2 group-hover/item:text-slate-300 transition-colors duration-300">
-                                      {service.description}
-                                    </p>
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-slate-700/50">
-                          <Link
-                            href="/services"
-                            className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
-                            onClick={() => setServicesDropdownOpen(false)}
-                          >
-                            View All Services
-                            <ArrowRight className="ml-1 w-4 h-4" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Solutions Dropdown */}
-                  {hasDropdown && label === 'Solutions' && (
-                    <div
-                      className={`
-                        absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[800px]
-                        transition-all duration-300 origin-top
-                        ${solutionsDropdownOpen
-                          ? 'opacity-100 visible scale-100'
-                          : 'opacity-0 invisible scale-95'
-                        }
-                      `}
-                    >
-                      <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-blue-500/20 border border-slate-700/50 p-6">
-                        <div className="mb-4">
-                          <h3 className="text-white font-semibold text-lg mb-2">Our AI Solutions</h3>
-                          <p className="text-slate-400 text-sm">Discover our cutting-edge artificial intelligence solutions designed for African businesses</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          {solutions.map((solution) => {
-                            const IconComponent = solution.icon;
-                            return (
-                              <Link
-                                key={solution.href}
-                                href={solution.href}
-                                className="group/item p-4 rounded-xl border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:bg-slate-800/50"
-                                onClick={() => setSolutionsDropdownOpen(false)}
-                              >
-                                <div className="flex items-start space-x-3">
-                                  <div className={`
-                                    flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r ${solution.gradient}
-                                    flex items-center justify-center text-white
-                                    group-hover/item:scale-110 transition-transform duration-300
-                                  `}>
-                                    <IconComponent className="w-5 h-5" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                      <h4 className="text-white font-medium text-sm group-hover/item:text-blue-400 transition-colors duration-300">
-                                        {solution.title}
-                                      </h4>
-                                      <div className="flex flex-wrap gap-1">
-                                        {solution.category.map((cat) => (
-                                          <span
-                                            key={cat}
-                                            className={`
-                                              px-2 py-1 rounded-full text-xs font-medium
-                                              ${getCategoryColor(cat)}
-                                            `}
-                                          >
-                                            {cat.toUpperCase()}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                    <p className="text-slate-400 text-xs line-clamp-2 group-hover/item:text-slate-300 transition-colors duration-300">
-                                      {solution.description}
-                                    </p>
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-slate-700/50">
-                          <Link
-                            href="/solutions"
-                            className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
-                            onClick={() => setSolutionsDropdownOpen(false)}
-                          >
-                            View All Solutions
-                            <ArrowRight className="ml-1 w-4 h-4" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+              <NavDropdown label="Company" dropdownKey="company" />
             </div>
 
-            {/* CTA Button - Desktop */}
-            <Link
-              href="/contact"
+            {/* CTA */}
+            <a
+              href="mailto:contact@synthi-ai.com"
               className="
-                hidden lg:flex items-center justify-center
-                bg-blue-600 hover:bg-blue-700
-                text-white font-semibold text-sm xl:text-base
-                px-6 py-3 rounded-xl
-                transition-all duration-300 transform hover:scale-105
-                shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40
-                min-w-[160px] xl:min-w-[180px] group
+                hidden lg:inline-flex items-center gap-2
+                bg-[#6b7db8] hover:bg-[#5a6ca7]
+                text-white font-semibold text-[13px]
+                px-5 py-2.5 rounded-xl
+                transition-all duration-300 hover:shadow-lg hover:shadow-[#6b7db8]/20
+                group
               "
             >
-              <span>Get In Touch</span>
-              <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+              <span>Get in touch</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </a>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile button */}
             <button
-              className="lg:hidden relative z-50 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent rounded-lg"
+              className="lg:hidden p-2 text-white rounded-lg focus:outline-none"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* ─── Mobile Menu ─── */}
       <div
         className={`
-          fixed inset-0 z-40 lg:hidden transition-all duration-500
-          ${mobileMenuOpen
-            ? 'opacity-100 visible'
-            : 'opacity-0 invisible'
-          }
+          fixed inset-0 z-40 lg:hidden transition-all duration-400
+          ${mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}
         `}
       >
-        {/* Backdrop */}
-        <div
-          className={`
-            absolute inset-0 bg-slate-900/90 backdrop-blur-sm
-            transition-opacity duration-500
-            ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}
-          `}
-          onClick={() => setMobileMenuOpen(false)}
-        />
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
 
-        {/* Mobile Menu Panel */}
         <div
           className={`
             absolute right-0 top-0 h-full w-full max-w-sm
-            bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900
-            shadow-2xl transform transition-transform duration-500 ease-out
+            bg-[#08081a] border-l border-[#6b7db8]/10
+            transform transition-transform duration-500 ease-out
             ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
             overflow-y-auto
           `}
         >
-          <div className="flex flex-col h-full pt-24 pb-6 px-6">
+          <div className="flex flex-col h-full pt-20 pb-8 px-5">
 
-            {/* Mobile Brand */}
-            <div className="flex items-center space-x-2 mb-8 pb-6 border-b border-slate-700/50">
-              <div className="relative overflow-hidden rounded-lg">
-                <Image
-                  src="/logo.png"
-                  alt="Company Logo"
-                  width={120}
-                  height={40}
-                  sizes="120px"
-                  className="h-auto w-auto"
-                />
-              </div>
+            {/* Brand */}
+            <div className="mb-6 pb-5 border-b border-[#6b7db8]/10 flex items-center justify-between">
+              <Image src="/logo.png" alt="Synthi AI" width={100} height={36} sizes="100px" className="h-auto w-auto" />
             </div>
 
-            {/* Mobile Navigation Links */}
-            <nav className="flex-1 space-y-2" role="navigation">
-              {navItems.map(({ href, label, hasDropdown }, index) => (
-                <div key={href}>
-                  {hasDropdown ? (
-                    <div className="space-y-2">
-                      <button
-                        className={`
-                          w-full text-left px-6 py-4 rounded-xl font-medium text-lg
-                          transition-all duration-300 transform flex items-center justify-between
-                          ${isActiveLink(href)
-                            ? 'text-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/20'
-                            : 'text-slate-200 hover:text-white hover:bg-white/10'
-                          }
-                          ${mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
-                        `}
-                        style={{
-                          transitionDelay: mobileMenuOpen ? `${index * 100 + 200}ms` : '0ms'
-                        }}
-                        onClick={() => {
-                          if (label === 'Solutions') {
-                            setSolutionsDropdownOpen(!solutionsDropdownOpen);
-                            setServicesDropdownOpen(false);
-                          } else {
-                            setServicesDropdownOpen(!servicesDropdownOpen);
-                            setSolutionsDropdownOpen(false);
-                          }
-                        }}
+            <nav className="flex-1 space-y-0.5">
+              {/* Home */}
+              <Link
+                href="/"
+                className={`block px-4 py-3 rounded-xl text-[15px] font-medium transition-colors duration-200 ${
+                  pathname === '/' ? 'text-white bg-[#6b7db8]/12' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+
+              {/* AI Services accordion */}
+              <div>
+                <button
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200"
+                  onClick={() => setMobileExpanded(mobileExpanded === 'services' ? null : 'services')}
+                >
+                  AI Services
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'services' ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileExpanded === 'services' && (
+                  <div className="ml-3 border-l border-[#6b7db8]/10 pl-3 space-y-0.5 pb-2">
+                    {aiServicesItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-white transition-colors duration-200"
+                        onClick={() => setMobileMenuOpen(false)}
                       >
-                        <span>{label}</span>
-                        <ChevronDown
-                          className={`w-5 h-5 transition-transform duration-300 ${(label === 'Solutions' && solutionsDropdownOpen) || (label === 'Services' && servicesDropdownOpen) ? 'rotate-180' : ''
-                            }`}
-                        />
-                      </button>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                      {/* Mobile Services Dropdown */}
-                      {label === 'Services' && servicesDropdownOpen && (
-                        <div className="ml-4 space-y-1">
-                          {services.slice(0, 4).map((service) => {
-                            const IconComponent = service.icon;
-                            return (
-                              <Link
-                                key={service.href}
-                                href={service.href}
-                                className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300"
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                <div className="flex items-center space-x-3">
-                                  <IconComponent className="w-5 h-5 text-blue-400" />
-                                  <div>
-                                    <div className="font-medium text-sm">{service.title}</div>
-                                    <div className="text-xs text-slate-400">{service.description}</div>
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                          <Link
-                            href="/services"
-                            className="block px-4 py-2 text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors duration-300"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            View All Services →
-                          </Link>
-                        </div>
-                      )}
+              {/* Industries accordion */}
+              <div>
+                <button
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200"
+                  onClick={() => setMobileExpanded(mobileExpanded === 'industries' ? null : 'industries')}
+                >
+                  Industries
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'industries' ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileExpanded === 'industries' && (
+                  <div className="ml-3 border-l border-[#6b7db8]/10 pl-3 space-y-0.5 pb-2">
+                    {industriesItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-white transition-colors duration-200"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-                      {/* Mobile Solutions Dropdown */}
-                      {label === 'Solutions' && solutionsDropdownOpen && (
-                        <div className="ml-4 space-y-1">
-                          {solutions.slice(0, 4).map((solution) => {
-                            const IconComponent = solution.icon;
-                            return (
-                              <Link
-                                key={solution.href}
-                                href={solution.href}
-                                className="block px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300"
-                                onClick={() => setMobileMenuOpen(false)}
-                              >
-                                <div className="flex items-center space-x-3">
-                                  <IconComponent className="w-5 h-5 text-blue-400" />
-                                  <div>
-                                    <div className="font-medium text-sm">{solution.title}</div>
-                                    <div className="text-xs text-slate-400">{solution.description}</div>
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                          <Link
-                            href="/solutions"
-                            className="block px-4 py-2 text-blue-400 text-sm font-medium hover:text-blue-300 transition-colors duration-300"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            View All Solutions →
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <Link
-                      href={href}
-                      className={`
-                        block px-6 py-4 rounded-xl font-medium text-lg
-                        transition-all duration-300 transform
-                        ${isActiveLink(href)
-                          ? 'text-blue-400 bg-blue-500/20 shadow-lg shadow-blue-500/20'
-                          : 'text-slate-200 hover:text-white hover:bg-white/10'
-                        }
-                        ${mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
-                      `}
-                      style={{
-                        transitionDelay: mobileMenuOpen ? `${index * 100 + 200}ms` : '0ms'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {label}
-                    </Link>
-                  )}
-                </div>
-              ))}
+              {/* Direct links */}
+              <Link
+                href="/labs"
+                className={`block px-4 py-3 rounded-xl text-[15px] font-medium transition-colors duration-200 ${
+                  isActive('/labs') ? 'text-white bg-[#6b7db8]/12' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Portfolio
+              </Link>
+
+              {/* Company accordion */}
+              <div>
+                <button
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-[15px] font-medium text-gray-400 hover:text-white transition-colors duration-200"
+                  onClick={() => setMobileExpanded(mobileExpanded === 'company' ? null : 'company')}
+                >
+                  Company
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'company' ? 'rotate-180' : ''}`} />
+                </button>
+                {mobileExpanded === 'company' && (
+                  <div className="ml-3 border-l border-[#6b7db8]/10 pl-3 space-y-0.5 pb-2">
+                    {companyItems.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className="block px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-white transition-colors duration-200"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </nav>
 
-            {/* Mobile CTA Button */}
-            <Link
-              href="/contact"
-              className={`
-                flex items-center justify-center
-                bg-blue-600 hover:bg-blue-700
-                text-white font-semibold text-lg
-                px-6 py-4 rounded-xl mt-6
-                transition-all duration-300 transform hover:scale-105
-                shadow-lg shadow-blue-500/25
-                ${mobileMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
-              `}
-              style={{
-                transitionDelay: mobileMenuOpen ? '700ms' : '0ms'
-              }}
+            {/* CTA */}
+            <a
+              href="mailto:contact@synthi-ai.com"
+              className="flex items-center justify-center gap-2 bg-[#6b7db8] text-white font-semibold text-[15px] px-6 py-3.5 rounded-xl mt-6 transition-all duration-300 hover:bg-[#5a6ca7]"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span>Get In Touch</span>
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Link>
+              Get in touch
+              <ArrowRight className="w-4 h-4" />
+            </a>
 
+            {/* Socials */}
+            <div className="mt-6 pt-5 border-t border-[#6b7db8]/10 flex items-center gap-5">
+              <a href="https://www.linkedin.com/company/synthi-ai/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6b7db8] text-xs transition-colors">LinkedIn</a>
+              <a href="https://www.youtube.com/@SYNTHIAI-y2o" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6b7db8] text-xs transition-colors">YouTube</a>
+              <a href="https://www.instagram.com/synthiai4/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6b7db8] text-xs transition-colors">Instagram</a>
+              <a href="https://www.tiktok.com/@synthi_ai" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#6b7db8] text-xs transition-colors">TikTok</a>
+            </div>
           </div>
         </div>
       </div>

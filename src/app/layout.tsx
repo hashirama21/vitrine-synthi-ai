@@ -2,7 +2,6 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import React from 'react';
 import type { Metadata } from 'next';
-import { Viewport } from 'next/dist/lib/metadata/types/extra-types';
 import { BackToTopButton } from '@/components/BackToTopButton';
 import { CookieBanner } from '@/components/CookieBanner';
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
@@ -62,12 +61,6 @@ export const metadata: Metadata = {
     canonical: 'https://synthi-ai.com',
   },
   category: 'technology',
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
 };
 
 export default function RootLayout({
