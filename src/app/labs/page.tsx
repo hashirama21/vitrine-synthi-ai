@@ -136,7 +136,7 @@ const categories: CategorySection[] = [
         title: "NLP for African Languages",
         description:
           "State-of-the-art natural language processing models supporting over 50 African languages including Swahili, Yoruba, Hausa, Wolof, and Lingala. Sentiment analysis, translation, and text generation tailored for continental diversity.",
-        image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=600&h=400&fit=crop",
+        image: "https://images.unsplash.com/photo-1655720828018-edd71de8949c?w=600&h=400&fit=crop",
       },
       {
         id: "computer-vision",
@@ -628,6 +628,7 @@ export default function SolutionsPortfolio() {
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
+            
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.35 }}
             className="mt-5 text-lg sm:text-xl text-brand-lighter/70 max-w-2xl mx-auto leading-relaxed"
@@ -819,13 +820,13 @@ export default function SolutionsPortfolio() {
                     tailor cutting-edge solutions to your specific needs.
                   </p>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a
-                      href="mailto:contact@synthi-ai.com"
+                    <Link
+                      href="/contact"
                       className="inline-flex items-center gap-2 bg-white text-navy font-bold px-7 py-3.5 rounded-xl transition-all duration-300 hover:bg-brand-lightest hover:scale-[1.03] shadow-lg"
                     >
                       Get in touch
                       <ArrowRight className="w-4 h-4" />
-                    </a>
+                    </Link>
                     <Link
                       href="/about"
                       className="inline-flex items-center gap-2 border-2 border-white/20 text-white font-semibold px-7 py-3.5 rounded-xl transition-all duration-300 hover:bg-white/10 hover:border-white/40"
