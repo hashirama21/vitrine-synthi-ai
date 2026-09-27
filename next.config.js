@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // Export statique (HTML/CSS/JS) pour l'hébergement sur GitHub Pages.
+    output: 'export',
+    // GitHub Pages sert des fichiers statiques : chaque route devient un dossier/index.html.
+    trailingSlash: true,
     images: {
+      // Le loader d'optimisation d'images de Next nécessite un serveur : on le désactive pour l'export.
+      unoptimized: true,
       domains: [
         'www.automate.org',
         'syd.cloud.appwrite.io',

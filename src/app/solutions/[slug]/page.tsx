@@ -54,8 +54,9 @@ export async function generateMetadata({
   }
 }
 
-export const revalidate = 3600;
-export const dynamicParams = true;
+// Export statique : seules les pages générées par generateStaticParams (au build)
+// sont produites. L'ISR (revalidate) et les params dynamiques ne sont pas supportés sur Pages.
+export const dynamicParams = false;
 
 interface SolutionDetailPageProps {
   params: { slug: string };

@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+# Déploie l'export statique Next.js (dossier ./out) sur GitHub Pages.
+on:
+  push:
+    branches: [ main ]
+  # Permet de lancer le déploiement manuellement depuis l'onglet Actions.
+  workflow_dispatch:
+
+# Permissions requises par l'action de déploiement Pages (OIDC + écriture des pages).
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; on n'annule pas un déploiement en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build (Next.js static export)
+    runs-on: ubuntu-latest
+    env:
+      # Variables publiques Appwrite lues au build (SDK client, endpoint public).
+      NEXT_PUBLIC_APPWRITE_PROJECT_ID: "6882384d00032ba96226"
+      NEXT_PUBLIC_APPWRITE_ENDPOINT: "https://syd.cloud.appwrite.io/v1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build & export
+        # `next build` produit directement ./out grâce à `output: 'export'` (next.config.js).
+        run: yarn build
+
+      - name: Disable Jekyll processing
+        # Empêche GitHub Pages d'ignorer les fichiers commençant par un underscore (_next).
+        run: touch ./out/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
